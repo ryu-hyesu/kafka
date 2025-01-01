@@ -37,6 +37,7 @@ import scala.annotation.nowarn
 
 class PlaintextProducerSendTest extends BaseProducerSendTest {
 
+  // 잘못된 직렬화 설정
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testWrongSerializer(quorum: String): Unit = {
@@ -49,6 +50,7 @@ class PlaintextProducerSendTest extends BaseProducerSendTest {
     assertThrows(classOf[SerializationException], () => producer.send(record))
   }
 
+  // 배치 크기가 0일 때 정상작동하는가
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testBatchSizeZero(quorum: String): Unit = {
@@ -59,6 +61,7 @@ class PlaintextProducerSendTest extends BaseProducerSendTest {
     sendAndVerify(producer)
   }
 
+  // 배치 크기 0, 파티션 미지정, 키가 없는 레코드가 정상적으로 처리되는지 테스트
   @Timeout(value = 15, unit = TimeUnit.SECONDS, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
@@ -71,7 +74,8 @@ class PlaintextProducerSendTest extends BaseProducerSendTest {
         val record = new ProducerRecord[Array[Byte], Array[Byte]](topic, null, s"value$i".getBytes(StandardCharsets.UTF_8))
         producer.send(record)
       }
-      producer.flush()
+      producer.flush() // 모든 메시지 강제 전송
+      // 전송된 레코드의 메타데이터를 가져와 다음을 검증함.
       val lastOffset = futures.foldLeft(0) { (offset, future) =>
         val recordMetadata = future.get
         assertEquals(topic, recordMetadata.topic)
@@ -83,6 +87,7 @@ class PlaintextProducerSendTest extends BaseProducerSendTest {
     }
   }
 
+  // 압축된 메시지를 전송할 때 LogAppendTime이 올바르게 설정되는지 확인
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testSendCompressedMessageWithLogAppendTime(quorum: String): Unit = {
@@ -93,6 +98,7 @@ class PlaintextProducerSendTest extends BaseProducerSendTest {
     sendAndVerifyTimestamp(producer, TimestampType.LOG_APPEND_TIME)
   }
 
+  // 압축되지 않은 메시지를 전송할 때 LogAppendTime이 올바르게 설정되는지 확인
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testSendNonCompressedMessageWithLogAppendTime(quorum: String): Unit = {
@@ -104,6 +110,7 @@ class PlaintextProducerSendTest extends BaseProducerSendTest {
    * testAutoCreateTopic
    *
    * The topic should be created upon sending the first message
+   * 첫 번째 메시지를 보낼 때 자동으로 토픽이 생성되는지 테스트
    */
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
@@ -121,6 +128,7 @@ class PlaintextProducerSendTest extends BaseProducerSendTest {
     }
   }
 
+  // 유효하지 않은 타임스탬프를 가진 메시지가 전송되지 않고 예외를 발생시키는지 확인
   @ParameterizedTest
   @MethodSource(Array("quorumAndTimestampConfigProvider"))
   def testSendWithInvalidBeforeAndAfterTimestamp(quorum: String, messageTimeStampConfig: String, recordTimestamp: Long): Unit = {
@@ -150,6 +158,7 @@ class PlaintextProducerSendTest extends BaseProducerSendTest {
     }
   }
 
+  // 타임스탬프가 토픽의 허용 임계값에 정확히 일치할 때 메시지가 정상적으로 전송되는지 확인
   @ParameterizedTest
   @MethodSource(Array("quorumAndTimestampConfigProvider"))
   def testValidBeforeAndAfterTimestampsAtThreshold(quorum: String, messageTimeStampConfig: String, recordTimestamp: Long): Unit = {
@@ -170,6 +179,7 @@ class PlaintextProducerSendTest extends BaseProducerSendTest {
     compressedProducer.close()
   }
 
+  // 타임스탬프가 허용 임계값 내에 있을 때 메시지가 정상적으로 전송되는지 확인.
   @ParameterizedTest
   @MethodSource(Array("quorumAndTimestampConfigProvider"))
   def testValidBeforeAndAfterTimestampsWithinThreshold(quorum: String, messageTimeStampConfig: String, recordTimestamp: Long): Unit = {
@@ -194,6 +204,7 @@ class PlaintextProducerSendTest extends BaseProducerSendTest {
   // Test that producer with max.block.ms=0 can be used to send in non-blocking mode
   // where requests are failed immediately without blocking if metadata is not available
   // or buffer is full.
+  // max.block.ms=0으로 설정된 프로듀서가 비차단(non-blocking) 방식으로 동작하는지 테스트
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testNonBlockingProducer(quorum: String): Unit = {
@@ -250,6 +261,7 @@ class PlaintextProducerSendTest extends BaseProducerSendTest {
     verifySendSuccess(future2)               // previous batch should be completed and sent now
   }
 
+  // 메시지 크기가 브로커의 max.request.size보다 클 경우 전송 실패 여부 테스트
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testSendRecordBatchWithMaxRequestSizeAndHigher(quorum: String): Unit = {

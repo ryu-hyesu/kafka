@@ -29,6 +29,7 @@ import org.apache.kafka.admin.AdminUtils
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.admin.AlterConfigOp.OpType
 import org.apache.kafka.clients.admin.{AlterConfigOp, ConfigEntry, EndpointType}
+import org.apache.kafka.clients.consumer.SharedMemoryManager
 import org.apache.kafka.common.acl.AclOperation
 import org.apache.kafka.common.acl.AclOperation._
 import org.apache.kafka.common.config.ConfigResource
@@ -613,35 +614,54 @@ class KafkaApis(val requestChannel: RequestChannel,
    */
   def handleProduceRequest(request: RequestChannel.Request, requestLocal: RequestLocal): Unit = {
     val produceRequest = request.body[ProduceRequest]
+    println(s"this is the shm-0's api key ${request.header.apiKey()}")
+    if (request.context.connectionId == "shm-0") {
+      println(s"Connection shm-0: Received ProduceRequest with ${produceRequest.data.topicData.size()} topics.")
+    }
 
+    // 트랜잭션 유무 확인
     if (RequestUtils.hasTransactionalRecords(produceRequest)) {
       val isAuthorizedTransactional = produceRequest.transactionalId != null &&
         authHelper.authorize(request.context, WRITE, TRANSACTIONAL_ID, produceRequest.transactionalId)
+      if (request.context.connectionId == "shm-0") {
+        println(s"Connection shm-0: Transactional validation result: $isAuthorizedTransactional for transactionalId ${produceRequest.transactionalId}.")
+      }
       if (!isAuthorizedTransactional) {
         requestHelper.sendErrorResponseMaybeThrottle(request, Errors.TRANSACTIONAL_ID_AUTHORIZATION_FAILED.exception)
         return
       }
     }
 
-    val unauthorizedTopicResponses = mutable.Map[TopicPartition, PartitionResponse]()
-    val nonExistingTopicResponses = mutable.Map[TopicPartition, PartitionResponse]()
-    val invalidRequestResponses = mutable.Map[TopicPartition, PartitionResponse]()
+    // 토픽 및 파티션 처리
+    val unauthorizedTopicResponses = mutable.Map[TopicPartition, PartitionResponse]() // 권한이 없는 토픽
+    val nonExistingTopicResponses = mutable.Map[TopicPartition, PartitionResponse]() // 존재하지 않는 토픽
+    val invalidRequestResponses = mutable.Map[TopicPartition, PartitionResponse]() // 요청 레코드의 유효성 검사 실패
     val authorizedRequestInfo = mutable.Map[TopicPartition, MemoryRecords]()
     // cache the result to avoid redundant authorization calls
     val authorizedTopics = authHelper.filterByAuthorized(request.context, WRITE, TOPIC,
       produceRequest.data().topicData().asScala)(_.name())
 
     produceRequest.data.topicData.forEach(topic => topic.partitionData.forEach { partition =>
+      if (request.context.connectionId == "shm-0") {
+        println(s"Connection shm-0: Processing topic ${topic.name}, partition ${partition.index}.")
+      }
+
       val topicPartition = new TopicPartition(topic.name, partition.index)
       // This caller assumes the type is MemoryRecords and that is true on current serialization
       // We cast the type to avoid causing big change to code base.
       // https://issues.apache.org/jira/browse/KAFKA-10698
       val memoryRecords = partition.records.asInstanceOf[MemoryRecords]
-      if (!authorizedTopics.contains(topicPartition.topic))
+      if (!authorizedTopics.contains(topicPartition.topic)) {
         unauthorizedTopicResponses += topicPartition -> new PartitionResponse(Errors.TOPIC_AUTHORIZATION_FAILED)
-      else if (!metadataCache.contains(topicPartition))
+        if (request.context.connectionId == "shm-0") {
+          println(s"Connection shm-0: Authorization failed for topic ${topic.name}.")
+        }
+      } else if (!metadataCache.contains(topicPartition)) {
         nonExistingTopicResponses += topicPartition -> new PartitionResponse(Errors.UNKNOWN_TOPIC_OR_PARTITION)
-      else
+        if (request.context.connectionId == "shm-0") {
+          println(s"Connection shm-0: Topic or partition does not exist: ${topic.name}, partition ${partition.index}.")
+        }
+      } else
         try {
           ProduceRequest.validateRecords(request.header.apiVersion, memoryRecords)
           authorizedRequestInfo += (topicPartition -> memoryRecords)
@@ -657,10 +677,20 @@ class KafkaApis(val requestChannel: RequestChannel,
     // https://issues.apache.org/jira/browse/KAFKA-10730
     @nowarn("cat=deprecation")
     def sendResponseCallback(responseStatus: Map[TopicPartition, PartitionResponse]): Unit = {
+      if (request.context.connectionId == "shm-0") {
+        val errorPartitions = responseStatus.filter(_._2.error != Errors.NONE)
+        if (errorPartitions.isEmpty) {
+          println(s"Connection shm-0: Produce request completed successfully for all partitions.")
+        } else {
+          println(s"Connection shm-0: Produce request failed for partitions: ${errorPartitions.keys.mkString(", ")}.")
+        }
+      }
+
       val mergedResponseStatus = responseStatus ++ unauthorizedTopicResponses ++ nonExistingTopicResponses ++ invalidRequestResponses
       var errorInResponse = false
 
       val nodeEndpoints = new mutable.HashMap[Int, Node]
+
       mergedResponseStatus.foreachEntry { (topicPartition, status) =>
         if (status.error != Errors.NONE) {
           errorInResponse = true
@@ -697,6 +727,10 @@ class KafkaApis(val requestChannel: RequestChannel,
         else quotas.request.maybeRecordAndGetThrottleTimeMs(request, timeMs)
       val maxThrottleTimeMs = Math.max(bandwidthThrottleTimeMs, requestThrottleTimeMs)
       if (maxThrottleTimeMs > 0) {
+        if (request.context.connectionId == "shm-0") {
+          println(s"Connection shm-0: Throttling applied with max throttle time: $maxThrottleTimeMs ms.")
+        }
+
         request.apiThrottleTimeMs = maxThrottleTimeMs
         if (bandwidthThrottleTimeMs > requestThrottleTimeMs) {
           requestHelper.throttle(quotas.produce, request, bandwidthThrottleTimeMs)
@@ -711,6 +745,7 @@ class KafkaApis(val requestChannel: RequestChannel,
         // the request, since no response is expected by the producer, the server will close socket server so that
         // the producer client will know that some error has happened and will refresh its metadata
         if (errorInResponse) {
+          println(s"Connection shm-0: Closing connection due to errors with ack=0.")
           val exceptionsSummary = mergedResponseStatus.map { case (topicPartition, status) =>
             topicPartition -> status.error.exceptionName
           }.mkString(", ")
@@ -721,11 +756,13 @@ class KafkaApis(val requestChannel: RequestChannel,
           )
           requestChannel.closeConnection(request, new ProduceResponse(mergedResponseStatus.asJava).errorCounts)
         } else {
+          println(s"Connection shm-0: No-op response sent with ack=0.")
           // Note that although request throttling is exempt for acks == 0, the channel may be throttled due to
           // bandwidth quota violation.
           requestHelper.sendNoOpResponseExemptThrottle(request)
         }
       } else {
+        println(s"Connection shm-0: Sending response with throttle time: $maxThrottleTimeMs ms.")
         requestChannel.sendResponse(request, new ProduceResponse(mergedResponseStatus.asJava, maxThrottleTimeMs, nodeEndpoints.values.toList.asJava), None)
       }
     }
@@ -736,9 +773,15 @@ class KafkaApis(val requestChannel: RequestChannel,
       }
     }
 
-    if (authorizedRequestInfo.isEmpty)
+    if (authorizedRequestInfo.isEmpty) {
+      if (request.context.connectionId == "shm-0") {
+        println("Connection shm-0: No authorized records to process.")
+      }
       sendResponseCallback(Map.empty)
-    else {
+    } else {
+      if (request.context.connectionId == "shm-0") {
+        println(s"Connection shm-0: Sending ${authorizedRequestInfo.size} records to replica manager.")
+      }
       val internalTopicsAllowed = request.header.clientId == AdminUtils.ADMIN_CLIENT_ID
       val transactionSupportedOperation = if (request.header.apiVersion > 10) genericError else defaultError
       // call the replica manager to append messages to the replicas
@@ -914,6 +957,29 @@ class KafkaApis(val requestChannel: RequestChannel,
       val reassigningPartitions = mutable.Set[TopicIdPartition]()
       val nodeEndpoints = new mutable.HashMap[Int, Node]
       responsePartitionData.foreach { case (tp, data) =>
+        // MemoryRecords에서 데이터를 읽어 출력
+        val memoryRecords = data.records
+        if (memoryRecords.sizeInBytes() > 0) {
+          val iterator = memoryRecords.records().iterator()
+          while (iterator.hasNext) {
+            val record = iterator.next()
+
+            // 레코드 데이터 출력
+            val key = if (record.hasKey) new String(record.key().array(), "UTF-8") else "null"
+            val value = record.value()
+            val valueBytes = new Array[Byte](value.remaining()) // remaining()으로 정확한 크기 계산
+            value.get(valueBytes) // ByteBuffer 데이터를 정확히 읽기
+            val valueString = new String(valueBytes, "UTF-8") + "-c" // UTF-8 문자열로 변환
+            val offset = record.offset()
+            val timestamp = record.timestamp()
+
+            val consudata = s"${tp.topic()}|${tp.topicPartition()}|$key|$valueString|$offset|$timestamp"
+            SharedMemoryManager.writeSharedMemory(consudata)
+          }
+        } else {
+          println("MemoryRecords is empty")
+        }
+
         val abortedTransactions = data.abortedTransactions.orElse(null)
         val lastStableOffset: Long = data.lastStableOffset.orElse(FetchResponse.INVALID_LAST_STABLE_OFFSET)
         if (data.isReassignmentFetch) reassigningPartitions.add(tp)

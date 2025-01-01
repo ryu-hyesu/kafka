@@ -113,7 +113,6 @@ class KafkaRequestHandler(
       val endTime = time.nanoseconds
       val idleTime = endTime - startSelectTime
       aggregateIdleMeter.mark(idleTime / totalHandlerThreads.get)
-
       req match {
         case RequestChannel.ShutdownRequest =>
           debug(s"Kafka request handler $id on broker $brokerId received shut down command")
@@ -152,6 +151,7 @@ class KafkaRequestHandler(
 
         case request: RequestChannel.Request =>
           try {
+            println("보낼 apiKey : " + request.header.apiKey())
             request.requestDequeueTimeNanos = endTime
             trace(s"Kafka request handler $id on broker $brokerId handling request $request")
             threadCurrentRequest.set(request)

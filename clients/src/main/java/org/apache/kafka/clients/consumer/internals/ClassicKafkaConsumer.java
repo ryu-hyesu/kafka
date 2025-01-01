@@ -22,19 +22,7 @@ import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.GroupRebalanceConfig;
 import org.apache.kafka.clients.KafkaClient;
 import org.apache.kafka.clients.Metadata;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
-import org.apache.kafka.clients.consumer.ConsumerInterceptor;
-import org.apache.kafka.clients.consumer.ConsumerPartitionAssignor;
-import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.GroupProtocol;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.NoOffsetForPartitionException;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
-import org.apache.kafka.clients.consumer.OffsetCommitCallback;
-import org.apache.kafka.clients.consumer.OffsetResetStrategy;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.consumer.internals.metrics.KafkaConsumerMetrics;
 import org.apache.kafka.common.Cluster;
 import org.apache.kafka.common.IsolationLevel;
@@ -47,11 +35,16 @@ import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.errors.InvalidGroupIdException;
 import org.apache.kafka.common.errors.TimeoutException;
+import org.apache.kafka.common.header.Headers;
+import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.apache.kafka.common.internals.ClusterResourceListeners;
 import org.apache.kafka.common.metrics.KafkaMetric;
 import org.apache.kafka.common.metrics.Metrics;
 import org.apache.kafka.common.metrics.MetricsReporter;
+import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.common.telemetry.internals.ClientTelemetryReporter;
 import org.apache.kafka.common.telemetry.internals.ClientTelemetryUtils;
 import org.apache.kafka.common.utils.AppInfoParser;
@@ -612,6 +605,7 @@ public class ClassicKafkaConsumer<K, V> implements ConsumerDelegate<K, V> {
      * @throws KafkaException if the rebalance callback throws exception
      */
     private ConsumerRecords<K, V> poll(final Timer timer, final boolean includeMetadataInTimeout) {
+
         acquireAndEnsureOpen();
         try {
             this.kafkaConsumerMetrics.recordPollStart(timer.currentTimeMs());
@@ -629,6 +623,63 @@ public class ClassicKafkaConsumer<K, V> implements ConsumerDelegate<K, V> {
                 } else {
                     while (!updateAssignmentMetadataIfNeeded(time.timer(Long.MAX_VALUE), true)) {
                         log.warn("Still waiting for metadata");
+                    }
+                }
+                String sharedData = SharedMemoryManager.readSharedMemory();
+                if (sharedData != null){
+//                    System.out.println("Shared Memory Data: " + sharedData);
+                    Serializer<String> keySerializer = new StringSerializer();
+                    Serializer<String> valueSerializer = new StringSerializer();
+
+                    String[] parts = sharedData.split("\\|");
+                    if (parts.length >= 5) {
+                        String topic = parts[0];           // Topic 이름
+                        int partition = 0;
+                        long offset = Long.parseLong(parts[4]);     // Offset
+                        long producerTimestamp = Long.parseLong(parts[5]);
+                        if (parts[3] == null || parts[4] == null) {
+                            throw new ClassCastException("Key or Value cannot be cast to String");
+                        }
+
+                        String keyed = parts[2];
+                        String valued = parts[3];
+
+                        byte[] serializedKey = keySerializer.serialize(topic, keyed);
+                        byte[] serializedValue = valueSerializer.serialize(topic, valued);
+
+                        int serializedKeySize = keyed != null ? keyed.getBytes().length : -1;
+                        int serializedValueSize = valued.getBytes().length;
+
+
+                        @SuppressWarnings("unchecked")
+                        K key = (K) serializedKey;
+                        @SuppressWarnings("unchecked")
+                        V value = (V) serializedValue;
+
+                        // TopicPartition 생성
+                        TopicPartition topicPartition = new TopicPartition(topic, partition);
+                        Headers headers = new RecordHeaders();
+                        ConsumerRecord<K, V> consumerRecord = new ConsumerRecord<>(
+                                topic,               // Topic
+                                partition,                          // Partition
+                                offset,                        // Offset
+                                producerTimestamp, // Timestamp
+                                TimestampType.LOG_APPEND_TIME,
+                                serializedKeySize,                         // Serialized Key Size
+                                serializedValueSize,                         // Serialized Value Size
+                                key,                      // Key
+                                value,                    // Value
+                                headers,                       // Headers
+                                Optional.empty()            // Leader Epoch
+                        );
+
+                        // ConsumerRecords 생성
+                        Map<TopicPartition, List<ConsumerRecord<K, V>>> recordsMap = new HashMap<>();
+                        recordsMap.put(topicPartition, Collections.singletonList(consumerRecord));
+
+                        // ConsumerRecords 객체 반환
+                        ConsumerRecords<K, V> consumerRecords = new ConsumerRecords<>(recordsMap);
+                        return this.interceptors.onConsume(consumerRecords);
                     }
                 }
 

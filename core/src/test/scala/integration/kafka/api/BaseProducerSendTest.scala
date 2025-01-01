@@ -47,10 +47,11 @@ import scala.jdk.CollectionConverters._
 
 abstract class BaseProducerSendTest extends KafkaServerTestHarness {
 
+  // Kafka 서버를 설정
   def generateConfigs: scala.collection.Seq[KafkaConfig] = {
     val overridingProps = new Properties()
     val numServers = 2
-    overridingProps.put(ServerLogConfigs.NUM_PARTITIONS_CONFIG, 4.toString)
+    overridingProps.put(ServerLogConfigs.NUM_PARTITIONS_CONFIG, 4.toString) // 기본 파티션 수 4개
     TestUtils.createBrokerConfigs(
       numServers,
       zkConnectOrNull,
@@ -71,6 +72,7 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
   override def setUp(testInfo: TestInfo): Unit = {
     super.setUp(testInfo)
 
+    println("Test : setup")
     admin = TestUtils.createAdminClient(brokers, listenerName,
         JaasTestUtils.securityConfigs(ConnectionMode.CLIENT,
           securityProtocol,
@@ -87,6 +89,7 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
 
   @AfterEach
   override def tearDown(): Unit = {
+    println("Test : tearDown")
     consumer.close()
     // Ensure that all producers are closed since unclosed producers impact other tests when Kafka server ports are reused
     producers.foreach(_.close())
@@ -115,7 +118,9 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
     registerProducer(producer)
   }
 
+  // 생성된 프로듀서는 registerProducer로 관리됨.
   protected def registerProducer(producer: KafkaProducer[Array[Byte], Array[Byte]]): KafkaProducer[Array[Byte], Array[Byte]] = {
+    println("Test : registerProducer")
     producers += producer
     producer
   }
@@ -125,10 +130,12 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
    *
    * 1. Send with null key/value/partition-id should be accepted; send with null topic should be rejected.
    * 2. Last message of the non-blocking send should return the correct offset metadata
+   * 3. key == value == partiton ID == null
    */
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testSendOffset(quorum: String): Unit = {
+    println("Test : testSendOffset")
     val producer = createProducer()
     val partition = 0
 
@@ -188,9 +195,16 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
     }
   }
 
+  /**
+   * testSendCompressedMessageWithCreateTime
+   *
+   * 1. 압축 메시지를 kafka에 전송하고 타임 스템프의 동작을 검증
+   * 2. 압축 유형 = gzip
+   */
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testSendCompressedMessageWithCreateTime(quorum: String): Unit = {
+    println("Test : testSendCompressedMessageWithCreateTime")
     val producer = createProducer(
       compressionType = "gzip",
       lingerMs = Int.MaxValue,
@@ -198,9 +212,17 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
     sendAndVerifyTimestamp(producer, TimestampType.CREATE_TIME)
   }
 
+
+  /**
+   * testSendNonCompressedMessageWithCreateTime
+   *
+   * 1. 특정 파티션으로 메시지 전송
+   * 2. 파티션 id가 지정되었을 때 올바른 파티션에 전송되고 있는가
+   */
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testSendNonCompressedMessageWithCreateTime(quorum: String): Unit = {
+    println("Test : testSendNonCompressedMessageWithCreateTime")
     val producer = createProducer(lingerMs = Int.MaxValue, deliveryTimeoutMs = Int.MaxValue)
     sendAndVerifyTimestamp(producer, TimestampType.CREATE_TIME)
   }
@@ -208,6 +230,7 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
   protected def sendAndVerify(producer: KafkaProducer[Array[Byte], Array[Byte]],
                               numRecords: Int = numRecords,
                               timeoutMs: Long = 20000L): Unit = {
+    println("Test : sendAndVerify")
     val partition = 0
     try {
       TestUtils.createTopicWithAdmin(admin, topic, brokers, controllerServers, 1, 2)
@@ -232,6 +255,7 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
   }
 
   protected def sendAndVerifyTimestamp(producer: KafkaProducer[Array[Byte], Array[Byte]], timestampType: TimestampType): Unit = {
+    println("Test : sendAndVerifyTimestamp")
     val partition = 0
 
     val baseTimestamp = 123456L
@@ -294,6 +318,7 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testClose(quorum: String): Unit = {
+    println("Test : testClose")
     val producer = createProducer()
 
     try {
@@ -328,6 +353,7 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testSendToPartition(quorum: String): Unit = {
+    println("Test : testSendToPartition")
     val producer = createProducer()
 
     try {
@@ -368,6 +394,7 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testSendToPartitionWithFollowerShutdownShouldNotTimeout(quorum: String): Unit = {
+    println("Test : testSendToPartitionWithFollowerShutdownShouldNotTimeout")
     // This test produces to a leader that has follower that is shutting down. It shows that
     // the produce request succeed, do not timeout and do not need to be retried.
     val producer = createProducer()
@@ -421,6 +448,7 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testSendBeforeAndAfterPartitionExpansion(quorum: String): Unit = {
+    println("Test : testSendBeforeAndAfterPartitionExpansion")
     val producer = createProducer(maxBlockMs = 5 * 1000L)
 
     // create topic
@@ -474,11 +502,12 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
   }
 
   /**
-   * Test that flush immediately sends all accumulated requests.
+   * Test that flush immediately sends all accumulated requests. (누락된 전송을 즉시 전송하는가)
    */
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testFlush(quorum: String): Unit = {
+    println("Test : testFlush")
     val producer = createProducer(lingerMs = Int.MaxValue, deliveryTimeoutMs = Int.MaxValue)
     try {
       TestUtils.createTopicWithAdmin(admin, topic, brokers, controllerServers, 2, 2)
@@ -496,11 +525,12 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
   }
 
   /**
-   * Test close with zero timeout from caller thread
+   * Test close with zero timeout from caller thread (모든 메시지가 전송되고 올바른 메타데이터를 반환하는가)
    */
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testCloseWithZeroTimeoutFromCallerThread(quorum: String): Unit = {
+    println("Test : testCloseWithZeroTimeoutFromCallerThread")
     TestUtils.createTopicWithAdmin(admin, topic, brokers, controllerServers, 2, 2)
     val partition = 0
     consumer.assign(List(new TopicPartition(topic, partition)).asJava)
@@ -527,6 +557,7 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
   @ParameterizedTest
   @ValueSource(strings = Array("zk", "kraft"))
   def testCloseWithZeroTimeoutFromSenderThread(quorum: String): Unit = {
+    println("Test : testCloseWithZeroTimeoutFromSenderThread")
     TestUtils.createTopicWithAdmin(admin, topic, brokers, controllerServers, 1, 2)
     val partition = 0
     consumer.assign(List(new TopicPartition(topic, partition)).asJava)

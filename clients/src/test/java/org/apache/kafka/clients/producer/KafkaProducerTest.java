@@ -21,9 +21,7 @@ import org.apache.kafka.clients.KafkaClient;
 import org.apache.kafka.clients.LeastLoadedNode;
 import org.apache.kafka.clients.MockClient;
 import org.apache.kafka.clients.NodeApiVersions;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.internals.FutureRecordMetadata;
 import org.apache.kafka.clients.producer.internals.ProduceRequestResult;
 import org.apache.kafka.clients.producer.internals.ProducerInterceptors;
@@ -1091,7 +1089,7 @@ public class KafkaProducerTest {
         when(valueSerializer.serialize(any(), any(), any())).then(invocation ->
                 invocation.<String>getArgument(2).getBytes());
 
-        String value = "value";
+        String value = "value2";
         String key = "key";
         ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, value);
 

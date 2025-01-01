@@ -410,7 +410,7 @@ object TestUtils extends Logging {
     topic: String,
     numPartitions: Int = 1,
     replicationFactor: Int = 1,
-    replicaAssignment: collection.Map[Int, Seq[Int]] = Map.empty,
+    replicaAssignment: collection.Map[Int, Seq[Int]] = Map.empty, // 비어 있으면 자동으로 복제본을 브로커에 분배
     topicConfig: Properties = new Properties,
   ): Uuid = {
     val configsMap = new util.HashMap[String, String]()
@@ -421,6 +421,7 @@ object TestUtils extends Logging {
         topic, numPartitions, replicationFactor.toShort).configs(configsMap)))
     } else {
       val assignment = new util.HashMap[Integer, util.List[Integer]]()
+      // 파티션에 따른 복제본 브로커 id리스트
       replicaAssignment.foreachEntry { case (k, v) =>
         val replicas = new util.ArrayList[Integer]
         v.foreach(r => replicas.add(r.asInstanceOf[Integer]))
@@ -430,7 +431,7 @@ object TestUtils extends Logging {
         topic, assignment).configs(configsMap)))
     }
 
-    result.topicId(topic).get()
+    result.topicId(topic).get() // 토픽의 고유 식별자(UUID)
   }
 
   def createTopicWithAdmin[B <: KafkaBroker](
@@ -438,17 +439,18 @@ object TestUtils extends Logging {
     topic: String,
     brokers: Seq[B],
     controllers: Seq[ControllerServer],
-    numPartitions: Int = 1,
-    replicationFactor: Int = 1,
-    replicaAssignment: collection.Map[Int, Seq[Int]] = Map.empty,
+    numPartitions: Int = 1, // 생성할 토픽의 파티션 개수
+    replicationFactor: Int = 1, // 파티션 당 복제본 개수
+    replicaAssignment: collection.Map[Int, Seq[Int]] = Map.empty, // 특정 파티션 번호와 복제본 브로커의 매핑
     topicConfig: Properties = new Properties,
   ): scala.collection.immutable.Map[Int, Int] = {
     val effectiveNumPartitions = if (replicaAssignment.isEmpty) {
-      numPartitions
+      numPartitions // 기본 파티션 개수
     } else {
-      replicaAssignment.size
+      replicaAssignment.size // 복제 브로커의 개수만큼 파티션 개수 할당
     }
 
+    // 토픽 존재 시 토픽의 파티션 수 == 복제본 수 확인
     def isTopicExistsAndHasSameNumPartitionsAndReplicationFactor(cause: Throwable): Boolean = {
       cause != null &&
         cause.isInstanceOf[TopicExistsException] &&
@@ -474,9 +476,12 @@ object TestUtils extends Logging {
     }
 
     // wait until we've propagated all partitions metadata to all brokers
+    // 모든 브로커가 해당 토픽의 메타데이터를 가지고 있는가.
     val allPartitionsMetadata = waitForAllPartitionsMetadata(brokers, topic, effectiveNumPartitions)
     controllers.foreach(controller => ensureConsistentKRaftMetadata(brokers, controller))
 
+    // 파티션 리더 확인 및 반환
+    // 각 파티션 별로 리더 브로커의 id 매핑 후 반환
     (0 until effectiveNumPartitions).map { i =>
       i -> allPartitionsMetadata.get(new TopicPartition(topic, i)).map(_.leader()).getOrElse(
         throw new IllegalStateException(s"Cannot get the partition leader for topic: $topic, partition: $i in server metadata cache"))

@@ -22,7 +22,7 @@ import java.net._
 import java.nio.ByteBuffer
 import java.nio.channels.{Selector => NSelector, _}
 import java.util
-import java.util.Optional
+import java.util.{Collections, Optional}
 import java.util.concurrent._
 import java.util.concurrent.atomic._
 import kafka.cluster.{BrokerEndPoint, EndPoint}
@@ -32,16 +32,21 @@ import kafka.network.SocketServer._
 import kafka.server.{ApiVersionManager, BrokerReconfigurable, KafkaConfig}
 import org.apache.kafka.common.message.ApiMessageType.ListenerType
 import kafka.utils._
+import org.apache.kafka.clients.producer.SharedMemoryManager
+import org.apache.kafka.common.compress.Compression
 import org.apache.kafka.common.config.ConfigException
 import org.apache.kafka.common.errors.InvalidRequestException
 import org.apache.kafka.common.memory.{MemoryPool, SimpleMemoryPool}
+import org.apache.kafka.common.message.ProduceRequestData
+import org.apache.kafka.common.message.ProduceRequestData.{PartitionProduceData, TopicProduceData, TopicProduceDataCollection}
 import org.apache.kafka.common.metrics._
 import org.apache.kafka.common.metrics.stats.{Avg, CumulativeSum, Meter, Rate}
 import org.apache.kafka.common.network.KafkaChannel.ChannelMuteEvent
 import org.apache.kafka.common.network.{ChannelBuilder, ChannelBuilders, ClientInformation, KafkaChannel, ListenerName, ListenerReconfigurable, NetworkSend, Selectable, Send, Selector => KSelector}
 import org.apache.kafka.common.protocol.ApiKeys
-import org.apache.kafka.common.requests.{ApiVersionsRequest, RequestContext, RequestHeader}
-import org.apache.kafka.common.security.auth.SecurityProtocol
+import org.apache.kafka.common.record.{MemoryRecords, SimpleRecord}
+import org.apache.kafka.common.requests.{ApiVersionsRequest, ProduceRequest, RequestContext, RequestHeader}
+import org.apache.kafka.common.security.auth.{KafkaPrincipal, SecurityProtocol}
 import org.apache.kafka.common.utils.{KafkaThread, LogContext, Time, Utils}
 import org.apache.kafka.common.{Endpoint, KafkaException, MetricName, Reconfigurable}
 import org.apache.kafka.network.{ConnectionQuotaEntity, ConnectionThrottledException, SocketServerConfigs, TooManyConnectionsException}
@@ -52,6 +57,7 @@ import org.apache.kafka.server.quota.QuotaUtils
 import org.apache.kafka.server.util.FutureUtils
 import org.slf4j.event.Level
 
+import java.nio.charset.StandardCharsets
 import scala.collection._
 import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
@@ -182,6 +188,131 @@ class SocketServer(val config: KafkaConfig,
   def nextProcessorId(): Int = {
     nextProcessorId.getAndIncrement()
   }
+
+  class MemoryPollingTask(intervalMs:Int) extends Runnable {
+    @volatile private var running = true // 폴링 제어 변수
+    private var thread: Option[Thread] = None // 내부 Thread 관리
+
+    def parseTopicValue(data: String): Option[(String, String, Long)] = {
+      if (data != null && data.contains("|")) {
+        val parts = data.split("\\|", 3) // 최대 두 개의 부분으로 분리
+        Some((parts(0), parts(1), parts(2).toLong)) // 첫 번째는 topic, 두 번째는 value
+      } else {
+        None // 데이터가 null이거나 ":"가 없는 경우
+      }
+    }
+
+    def start(): Unit = {
+      if (thread.isDefined && thread.get.isAlive) {
+        println("Polling task is already running!")
+        return
+      }
+
+      running = true
+      val t = new Thread(this)
+      thread = Some(t)
+      t.start()
+      println("Polling task started.")
+    }
+
+    def stop(): Unit = {
+      running = false
+    }
+
+    override def run(): Unit = {
+      println("Polling task started...")
+      while (running) {
+        val data = SharedMemoryManager.readSharedMemory()
+
+        if (data != null) {
+          parseTopicValue(data) match {
+            case Some((topic, value, timestamp)) =>
+              dataPlaneRequestChannel.sendRequest(makeRequest(topic, value, timestamp))
+            case None =>
+              println("Invalid data format, skipping...")
+          }
+        }
+
+        Thread.sleep(intervalMs) // 주기적으로 폴링 (intervalMs 밀리초)
+      }
+      println("Polling task stopped.")
+    }
+  }
+
+  def makeRequest(topic: String, value: String, timestamp: Long): RequestChannel.Request = {
+    val apiKey = ApiKeys.PRODUCE
+    val apiVersion: Short = ApiKeys.PRODUCE.latestVersion(true)
+    val clientId = "client-id"
+    val correlationId = -1
+
+    val messageBytes = value.getBytes(StandardCharsets.UTF_8)
+    val record = new SimpleRecord(timestamp, "key1".getBytes(StandardCharsets.UTF_8), messageBytes)
+
+    val magic: Byte = 2 // Use appropriate magic version
+    val compression: Compression = Compression.NONE
+
+    val records: MemoryRecords = MemoryRecords.withRecords(
+      magic,
+      compression,
+      record
+    )
+
+    val topicData = new TopicProduceData()
+      .setName(topic)
+      .setPartitionData(Collections.singletonList(
+        new PartitionProduceData()
+          .setRecords(records) // MemoryRecords 객체
+      ))
+
+    val topicDataCollection = new TopicProduceDataCollection()
+    topicDataCollection.add(topicData)
+
+    val RequestData = new ProduceRequestData()
+      .setTopicData(topicDataCollection)
+      .setAcks(0.toShort)
+      .setTransactionalId(null)
+      .setTimeoutMs(1000)
+
+    val requestHeader = new RequestHeader(apiKey, apiVersion, clientId, correlationId)
+    val serializedRequest = new ProduceRequest(RequestData, apiVersion).serialize()
+
+    // Use a default or loopback address for InetAddress
+    val inetAddress = InetAddress.getLoopbackAddress // 127.0.0.1
+
+    // Use a KafkaPrincipal with dummy data
+    val kafkaPrincipal = new KafkaPrincipal(KafkaPrincipal.USER_TYPE, "ANONYMOUS")
+
+    // Create a ListenerName with a placeholder name
+    val listenerName = new ListenerName("PLAINTEXT")
+
+    // Use a default ClientInformation
+    val clientInformation = new ClientInformation("client-software-name", "client-software-version")
+
+    // Create the RequestContext
+    val context = new RequestContext(
+      requestHeader,
+      "shm-0", // Connection ID placeholder
+      inetAddress,
+      kafkaPrincipal,
+      listenerName,
+      SecurityProtocol.PLAINTEXT,
+      clientInformation,
+      false // Authentication flag
+    )
+
+    // Return the RequestChannel.Request
+    new RequestChannel.Request(
+      0,
+      context,
+      time.nanoseconds(),
+      MemoryPool.NONE,
+      serializedRequest,
+      dataPlaneRequestChannel.metrics)
+  }
+
+  val pollingTask = new MemoryPollingTask(1000) // 10초 간격으로 폴링 작업 생성
+  pollingTask.start()
+
 
   /**
    * This method enables request processing for all endpoints managed by this SocketServer. Each
@@ -1101,6 +1232,7 @@ private[kafka] class Processor(
     // removed from the Selector after discarding any pending staged receives.
     // `openOrClosingChannel` can be None if the selector closed the connection because it was idle for too long
     if (openOrClosingChannel(connectionId).isDefined) {
+
       selector.send(new NetworkSend(connectionId, responseSend))
       inflightResponses += (connectionId -> response)
     }
@@ -1125,6 +1257,7 @@ private[kafka] class Processor(
       throw new InvalidRequestException(s"Received request api key ${header.apiKey} with version ${header.apiVersion} which is not enabled")
     }
   }
+
 
   private def processCompletedReceives(): Unit = {
     selector.completedReceives.forEach { receive =>

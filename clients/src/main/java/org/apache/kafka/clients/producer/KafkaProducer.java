@@ -78,8 +78,8 @@ import org.apache.kafka.common.utils.Timer;
 import org.apache.kafka.common.utils.Utils;
 
 import org.slf4j.Logger;
-
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
@@ -241,7 +241,6 @@ public class KafkaProducer<K, V> implements Producer<K, V> {
     private static final String JMX_PREFIX = "kafka.producer";
     public static final String NETWORK_THREAD_PREFIX = "kafka-producer-network-thread";
     public static final String PRODUCER_METRIC_GROUP_NAME = "producer-metrics";
-
     private final String clientId;
     // Visible for testing
     final Metrics metrics;
@@ -1014,9 +1013,11 @@ public class KafkaProducer<K, V> implements Producer<K, V> {
      * Implementation of asynchronously send a record to a topic.
      */
     private Future<RecordMetadata> doSend(ProducerRecord<K, V> record, Callback callback) {
-        // Append callback takes care of the following:
-        //  - call interceptors and user callback on completion
-        //  - remember partition that is calculated in RecordAccumulator.append
+        String value = new String((byte[]) record.value(), StandardCharsets.UTF_8); // on real server
+
+        String data = record.topic() + "|" + value + "-shm-p|" + System.currentTimeMillis();
+        SharedMemoryManager.write(data);
+
         AppendCallbacks appendCallbacks = new AppendCallbacks(callback, this.interceptors, record);
 
         try {
@@ -1050,7 +1051,6 @@ public class KafkaProducer<K, V> implements Producer<K, V> {
                         " to class " + producerConfig.getClass(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG).getName() +
                         " specified in value.serializer", cce);
             }
-
             // Try to calculate partition, but note that after this call it can be RecordMetadata.UNKNOWN_PARTITION,
             // which means that the RecordAccumulator would pick a partition using built-in logic (which may
             // take into account broker load, the amount of data produced to each partition, etc.).
