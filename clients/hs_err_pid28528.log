@@ -1,0 +1,610 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffae0ad1470, pid=28528, tid=20584
+#
+# JRE version: OpenJDK Runtime Environment Corretto-11.0.24.8.1 (11.0.24+8) (build 11.0.24+8-LTS)
+# Java VM: OpenJDK 64-Bit Server VM Corretto-11.0.24.8.1 (11.0.24+8-LTS, mixed mode, tiered, compressed oops, parallel gc, windows-amd64)
+# Problematic frame:
+# C  [VCRUNTIME140.dll+0x1470]
+#
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+# If you would like to submit a bug report, please visit:
+#   https://github.com/corretto/corretto-11/issues/
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Dkafka.cluster.test.repeat -Dorg.gradle.internal.worker.tmpdir=C:\Users\guest1\Desktop\test\kafka\clients\build\tmp\test\work -Xss4m -XX:+UseParallelGC -Xmx2g -Dfile.encoding=x-windows-949 -Duser.country=KR -Duser.language=ko -Duser.variant -ea worker.org.gradle.process.internal.worker.GradleWorkerMain 'Gradle Test Executor 7'
+
+Host: 12th Gen Intel(R) Core(TM) i5-12600KF, 16 cores, 15G,  Windows 11 , 64 bit Build 22621 (10.0.22621.4391)
+Time: Fri Jan  3 23:39:00 2025  Windows 11 , 64 bit Build 22621 (10.0.22621.4391) elapsed time: 1.316473 seconds (0d 0h 0m 1s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x000001c6e0077800):  JavaThread "Test worker" [_thread_in_vm, id=20584, stack(0x00000047cf000000,0x00000047cf400000)]
+
+Stack: [0x00000047cf000000,0x00000047cf400000],  sp=0x00000047cf3fb218,  free space=4076k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  [VCRUNTIME140.dll+0x1470]
+V  [jvm.dll+0x3e90fa]
+C  [sharedmemory.dll+0x1c51]
+
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  org.apache.kafka.clients.producer.SharedMemoryManager.readSharedMemoryBytes()[B+0
+j  org.apache.kafka.clients.NetworkClient.doSend(Lorg/apache/kafka/clients/ClientRequest;ZJLorg/apache/kafka/common/requests/AbstractRequest;)V+238
+j  org.apache.kafka.clients.NetworkClient.doSend(Lorg/apache/kafka/clients/ClientRequest;ZJ)V+185
+j  org.apache.kafka.clients.NetworkClient.handleInitiateApiVersionRequests(J)V+125
+j  org.apache.kafka.clients.NetworkClient.poll(JJ)Ljava/util/List;+178
+j  org.apache.kafka.clients.NetworkClientTest.awaitReady(Lorg/apache/kafka/clients/NetworkClient;Lorg/apache/kafka/common/Node;)V+41
+j  org.apache.kafka.clients.NetworkClientTest.testClose()V+28
+v  ~StubRoutines::call_stub
+j  jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;+0 java.base@11.0.24
+j  jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;+100 java.base@11.0.24
+j  jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;+6 java.base@11.0.24
+j  java.lang.reflect.Method.invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;+59 java.base@11.0.24
+j  org.junit.platform.commons.util.ReflectionUtils.invokeMethod(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;+42
+j  org.junit.jupiter.engine.execution.MethodInvocation.proceed()Ljava/lang/Object;+16
+j  org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed()Ljava/lang/Object;+8
+j  org.junit.jupiter.engine.extension.TimeoutExtension.intercept(Lorg/junit/jupiter/api/extension/InvocationInterceptor$Invocation;Lorg/junit/jupiter/api/extension/ReflectiveInvocationContext;Lorg/junit/jupiter/api/extension/ExtensionContext;Lorg/junit/jupiter/engine/extension/TimeoutDuration;Lorg/junit/jupiter/engine/extension/TimeoutExtension$TimeoutProvider;)Ljava/lang/Object;+28
+j  org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(Lorg/junit/jupiter/api/extension/InvocationInterceptor$Invocation;Lorg/junit/jupiter/api/extension/ReflectiveInvocationContext;Lorg/junit/jupiter/api/extension/ExtensionContext;Lorg/junit/jupiter/engine/extension/TimeoutExtension$TimeoutProvider;)Ljava/lang/Object;+31
+j  org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(Lorg/junit/jupiter/api/extension/InvocationInterceptor$Invocation;Lorg/junit/jupiter/api/extension/ReflectiveInvocationContext;Lorg/junit/jupiter/api/extension/ExtensionContext;)V+9
+j  org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor$$Lambda$205.apply(Lorg/junit/jupiter/api/extension/InvocationInterceptor;Lorg/junit/jupiter/api/extension/InvocationInterceptor$Invocation;Lorg/junit/jupiter/api/extension/ReflectiveInvocationContext;Lorg/junit/jupiter/api/extension/ExtensionContext;)V+5
+j  org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(Lorg/junit/jupiter/engine/execution/InterceptingExecutableInvoker$ReflectiveInterceptorCall$VoidMethodInterceptorCall;Lorg/junit/jupiter/api/extension/InvocationInterceptor;Lorg/junit/jupiter/api/extension/InvocationInterceptor$Invocation;Lorg/junit/jupiter/api/extension/ReflectiveInvocationContext;Lorg/junit/jupiter/api/extension/ExtensionContext;)Ljava/lang/Void;+6
+j  org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall$$Lambda$206.apply(Lorg/junit/jupiter/api/extension/InvocationInterceptor;Lorg/junit/jupiter/api/extension/InvocationInterceptor$Invocation;Lorg/junit/jupiter/api/extension/ReflectiveInvocationContext;Lorg/junit/jupiter/api/extension/ExtensionContext;)Ljava/lang/Object;+9
+j  org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(Lorg/junit/jupiter/engine/execution/InterceptingExecutableInvoker$ReflectiveInterceptorCall;Lorg/junit/jupiter/api/extension/ReflectiveInvocationContext;Lorg/junit/jupiter/api/extension/ExtensionContext;Lorg/junit/jupiter/api/extension/InvocationInterceptor;Lorg/junit/jupiter/api/extension/InvocationInterceptor$Invocation;)Ljava/lang/Object;+6
+j  org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$$Lambda$407.apply(Lorg/junit/jupiter/api/extension/InvocationInterceptor;Lorg/junit/jupiter/api/extension/InvocationInterceptor$Invocation;)Ljava/lang/Object;+14
+j  org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed()Ljava/lang/Object;+12
+j  org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(Lorg/junit/jupiter/api/extension/InvocationInterceptor$Invocation;)Ljava/lang/Object;+1
+j  org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(Lorg/junit/jupiter/api/extension/InvocationInterceptor$Invocation;Lorg/junit/jupiter/engine/execution/InvocationInterceptorChain$InterceptorCall;Ljava/util/List;)Ljava/lang/Object;+24
+j  org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(Lorg/junit/jupiter/api/extension/InvocationInterceptor$Invocation;Lorg/junit/jupiter/engine/extension/ExtensionRegistry;Lorg/junit/jupiter/engine/execution/InvocationInterceptorChain$InterceptorCall;)Ljava/lang/Object;+31
+j  org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(Lorg/junit/jupiter/api/extension/InvocationInterceptor$Invocation;Lorg/junit/jupiter/api/extension/ReflectiveInvocationContext;Lorg/junit/jupiter/api/extension/ExtensionContext;Lorg/junit/jupiter/engine/extension/ExtensionRegistry;Lorg/junit/jupiter/engine/execution/InterceptingExecutableInvoker$ReflectiveInterceptorCall;)Ljava/lang/Object;+15
+j  org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(Ljava/lang/reflect/Method;Ljava/lang/Object;Lorg/junit/jupiter/api/extension/ExtensionContext;Lorg/junit/jupiter/engine/extension/ExtensionRegistry;Lorg/junit/jupiter/engine/execution/InterceptingExecutableInvoker$ReflectiveInterceptorCall;)Ljava/lang/Object;+55
+j  org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(Lorg/junit/jupiter/api/extension/ExtensionContext;Lorg/junit/jupiter/engine/execution/JupiterEngineExecutionContext;)V+28
+j  org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor$$Lambda$437.execute()V+12
+j  org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(Lorg/junit/platform/engine/support/hierarchical/ThrowableCollector$Executable;)V+1
+j  org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(Lorg/junit/jupiter/engine/execution/JupiterEngineExecutionContext;Lorg/junit/platform/engine/support/hierarchical/Node$DynamicTestExecutor;)V+21
+j  org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(Lorg/junit/jupiter/engine/execution/JupiterEngineExecutionContext;Lorg/junit/platform/engine/support/hierarchical/Node$DynamicTestExecutor;)Lorg/junit/jupiter/engine/execution/JupiterEngineExecutionContext;+44
+j  org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(Lorg/junit/platform/engine/support/hierarchical/EngineExecutionContext;Lorg/junit/platform/engine/support/hierarchical/Node$DynamicTestExecutor;)Lorg/junit/platform/engine/support/hierarchical/EngineExecutionContext;+6
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6()V+79
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$328.execute()V+4
+j  org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(Lorg/junit/platform/engine/support/hierarchical/ThrowableCollector$Executable;)V+1
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(Lorg/junit/platform/engine/support/hierarchical/EngineExecutionContext;)V+15
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$327.invoke(Lorg/junit/platform/engine/support/hierarchical/EngineExecutionContext;)V+5
+j  org.junit.platform.engine.support.hierarchical.Node.around(Lorg/junit/platform/engine/support/hierarchical/EngineExecutionContext;Lorg/junit/platform/engine/support/hierarchical/Node$Invocation;)V+2
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9()V+14
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$326.execute()V+4
+j  org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(Lorg/junit/platform/engine/support/hierarchical/ThrowableCollector$Executable;)V+1
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively()V+31
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.execute()V+55
+j  org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService$$Lambda$332.accept(Ljava/lang/Object;)V+4
+j  java.util.ArrayList.forEach(Ljava/util/function/Consumer;)V+46 java.base@11.0.24
+j  org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(Ljava/util/List;)V+6
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6()V+116
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$328.execute()V+4
+j  org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(Lorg/junit/platform/engine/support/hierarchical/ThrowableCollector$Executable;)V+1
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(Lorg/junit/platform/engine/support/hierarchical/EngineExecutionContext;)V+15
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$327.invoke(Lorg/junit/platform/engine/support/hierarchical/EngineExecutionContext;)V+5
+j  org.junit.platform.engine.support.hierarchical.Node.around(Lorg/junit/platform/engine/support/hierarchical/EngineExecutionContext;Lorg/junit/platform/engine/support/hierarchical/Node$Invocation;)V+2
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9()V+14
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$326.execute()V+4
+j  org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(Lorg/junit/platform/engine/support/hierarchical/ThrowableCollector$Executable;)V+1
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively()V+31
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.execute()V+55
+j  org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService$$Lambda$332.accept(Ljava/lang/Object;)V+4
+j  java.util.ArrayList.forEach(Ljava/util/function/Consumer;)V+46 java.base@11.0.24
+j  org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(Ljava/util/List;)V+6
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6()V+116
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$328.execute()V+4
+j  org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(Lorg/junit/platform/engine/support/hierarchical/ThrowableCollector$Executable;)V+1
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(Lorg/junit/platform/engine/support/hierarchical/EngineExecutionContext;)V+15
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$327.invoke(Lorg/junit/platform/engine/support/hierarchical/EngineExecutionContext;)V+5
+j  org.junit.platform.engine.support.hierarchical.Node.around(Lorg/junit/platform/engine/support/hierarchical/EngineExecutionContext;Lorg/junit/platform/engine/support/hierarchical/Node$Invocation;)V+2
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9()V+14
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$326.execute()V+4
+j  org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(Lorg/junit/platform/engine/support/hierarchical/ThrowableCollector$Executable;)V+1
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively()V+31
+j  org.junit.platform.engine.support.hierarchical.NodeTestTask.execute()V+55
+j  org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(Lorg/junit/platform/engine/support/hierarchical/HierarchicalTestExecutorService$TestTask;)Ljava/util/concurrent/Future;+1
+j  org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute()Ljava/util/concurrent/Future;+74
+j  org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(Lorg/junit/platform/engine/ExecutionRequest;)V+31
+j  org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(Lorg/junit/platform/engine/TestDescriptor;Lorg/junit/platform/engine/EngineExecutionListener;Lorg/junit/platform/engine/ConfigurationParameters;Lorg/junit/platform/engine/TestEngine;)V+24
+j  org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(Lorg/junit/platform/launcher/core/LauncherDiscoveryResult;Lorg/junit/platform/engine/EngineExecutionListener;)V+115
+j  org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(Lorg/junit/platform/launcher/core/InternalTestPlan;Lorg/junit/platform/engine/EngineExecutionListener;Lorg/junit/platform/launcher/TestExecutionListener;)V+55
+j  org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(Lorg/junit/platform/launcher/core/InternalTestPlan;Lorg/junit/platform/launcher/TestExecutionListener;)V+6
+j  org.junit.platform.launcher.core.EngineExecutionOrchestrator$$Lambda$281.accept(Ljava/lang/Object;)V+12
+j  org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(Lorg/junit/platform/engine/ConfigurationParameters;Lorg/junit/platform/launcher/core/ListenerRegistry;Ljava/util/function/Consumer;)V+51
+j  org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(Lorg/junit/platform/launcher/core/InternalTestPlan;[Lorg/junit/platform/launcher/TestExecutionListener;)V+23
+j  org.junit.platform.launcher.core.DefaultLauncher.execute(Lorg/junit/platform/launcher/core/InternalTestPlan;[Lorg/junit/platform/launcher/TestExecutionListener;)V+6
+j  org.junit.platform.launcher.core.DefaultLauncher.execute(Lorg/junit/platform/launcher/LauncherDiscoveryRequest;[Lorg/junit/platform/launcher/TestExecutionListener;)V+34
+j  org.junit.platform.launcher.core.DelegatingLauncher.execute(Lorg/junit/platform/launcher/LauncherDiscoveryRequest;[Lorg/junit/platform/launcher/TestExecutionListener;)V+6
+j  org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.processAllTestClasses()V+94
+j  org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.access$000(Lorg/gradle/api/internal/tasks/testing/junitplatform/JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor;)V+1
+j  org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor.stop()V+4
+j  org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.stop()V+4
+v  ~StubRoutines::call_stub
+j  jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;+0 java.base@11.0.24
+j  jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;+100 java.base@11.0.24
+j  jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;+6 java.base@11.0.24
+j  java.lang.reflect.Method.invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;+59 java.base@11.0.24
+j  org.gradle.internal.dispatch.ReflectionDispatch.dispatch(Lorg/gradle/internal/dispatch/MethodInvocation;)V+19
+j  org.gradle.internal.dispatch.ReflectionDispatch.dispatch(Ljava/lang/Object;)V+5
+j  org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(Ljava/lang/Object;)V+22
+j  org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;+177
+j  com.sun.proxy.$Proxy4.stop()V+9
+j  org.gradle.api.internal.tasks.testing.worker.TestWorker$3.run()V+7
+j  org.gradle.api.internal.tasks.testing.worker.TestWorker.executeAndMaintainThreadName(Ljava/lang/Runnable;)V+1
+j  org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(Lorg/gradle/process/internal/worker/WorkerProcessContext;)V+76
+j  org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(Ljava/lang/Object;)V+5
+j  org.gradle.process.internal.worker.child.ActionExecutionWorker.execute(Lorg/gradle/process/internal/worker/WorkerProcessContext;)V+65
+j  org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call()Ljava/lang/Void;+270
+j  org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call()Ljava/lang/Object;+1
+j  worker.org.gradle.process.internal.worker.GradleWorkerMain.run()V+250
+j  worker.org.gradle.process.internal.worker.GradleWorkerMain.main([Ljava/lang/String;)V+7
+v  ~StubRoutines::call_stub
+
+siginfo: EXCEPTION_ACCESS_VIOLATION (0xc0000005), reading address 0x000001c6ad49ffe4
+
+
+Register to memory mapping:
+
+RIP=0x00007ffae0ad1470 VCRUNTIME140.dll
+RAX=0x000000008066fbc0 is pointing into object: [B 
+{0x000000008066fbb0} - klass: {type array byte}
+ - length: 704643072
+RBX=0x000001c6e0077800 is a thread
+RCX=0x000000008066fbc0 is pointing into object: [B 
+{0x000000008066fbb0} - klass: {type array byte}
+ - length: 704643072
+RDX=0x000001c6834a0004 points into unknown readable memory: 00 12 00 04
+RSP=0x00000047cf3fb218 is pointing into the stack for thread: 0x000001c6e0077800
+RBP=0x0 is NULL
+RSI=0x000000002a000000 is an unknown value
+RDI=0x000000008066fbb0 is an oop: [B 
+{0x000000008066fbb0} - klass: {type array byte}
+ - length: 704643072
+R8 =0x000000002a000000 is an unknown value
+R9 =0x000001c6e0077800 is a thread
+R10=0x00007ffae0ad0000 VCRUNTIME140.dll
+R11=0x00000047cf3fafe0 is pointing into the stack for thread: 0x000001c6e0077800
+R12=0x0 is NULL
+R13={method} {0x000001c68239f180} 'readSharedMemoryBytes' '()[B' in 'org/apache/kafka/clients/producer/SharedMemoryManager'
+R14=0x0 is NULL
+R15=0x0000000000000010 is an unknown value
+
+
+Registers:
+RAX=0x000000008066fbc0, RBX=0x000001c6e0077800, RCX=0x000000008066fbc0, RDX=0x000001c6834a0004
+RSP=0x00000047cf3fb218, RBP=0x0000000000000000, RSI=0x000000002a000000, RDI=0x000000008066fbb0
+R8 =0x000000002a000000, R9 =0x000001c6e0077800, R10=0x00007ffae0ad0000, R11=0x00000047cf3fafe0
+R12=0x0000000000000000, R13=0x000001c68239f178, R14=0x0000000000000000, R15=0x0000000000000010
+RIP=0x00007ffae0ad1470, EFLAGS=0x0000000000010206
+
+Top of Stack: (sp=0x00000047cf3fb218)
+0x00000047cf3fb218:   00007ffa884090fa 000001c6e0077800
+0x00000047cf3fb228:   00007ffa88407339 000001c6e0077800
+0x00000047cf3fb238:   00000047cf3fb370 000001c6e0077800
+0x00000047cf3fb248:   0000000000000000 000001c6e0077800
+0x00000047cf3fb258:   0000000000000000 000001c6e0077800
+0x00000047cf3fb268:   00000047cf3fb370 000001c6e881a4c3
+0x00000047cf3fb278:   00007ffae8b01c51 000001c68239f178
+0x00000047cf3fb288:   00000047cf3fb2e0 0000000000000208
+0x00000047cf3fb298:   00000000000007b0 000001c6834a0004
+0x00000047cf3fb2a8:   000001c6e0077800 2a000000e881a4c3
+0x00000047cf3fb2b8:   000001c6dde4bc20 000001c6834a0000
+0x00000047cf3fb2c8:   0000000000000000 0000000000000001
+0x00000047cf3fb2d8:   0000000000000208 00000047cf3fb358
+0x00000047cf3fb2e8:   000001c6e881f657 000001c6e0077b50
+0x00000047cf3fb2f8:   00000047cf3fb368 000001c6e881f2f6
+0x00000047cf3fb308:   000001c6e881f2f6 00000047cf3fb310 
+
+Instructions: (pc=0x00007ffae0ad1470)
+0x00007ffae0ad1370:   89 40 04 44 88 48 06 c3 4c 8b 02 8b 4a 08 44 0f
+0x00007ffae0ad1380:   b7 4a 0c 4c 89 00 89 48 08 66 44 89 48 0c c3 0f
+0x00007ffae0ad1390:   b7 0a 44 0f b6 42 02 66 89 08 44 88 40 02 c3 90
+0x00007ffae0ad13a0:   4c 8b 02 8b 4a 08 44 0f b6 4a 0c 4c 89 00 89 48
+0x00007ffae0ad13b0:   08 44 88 48 0c c3 4c 8b 02 0f b7 4a 08 4c 89 00
+0x00007ffae0ad13c0:   66 89 48 08 c3 4c 8b 02 0f b6 4a 08 4c 89 00 88
+0x00007ffae0ad13d0:   48 08 c3 4c 8b 02 8b 4a 08 4c 89 00 89 48 08 c3
+0x00007ffae0ad13e0:   8b 0a 44 0f b7 42 04 89 08 66 44 89 40 04 c3 8b
+0x00007ffae0ad13f0:   0a 44 0f b6 42 04 89 08 44 88 40 04 c3 48 8b 0a
+0x00007ffae0ad1400:   48 89 08 c3 0f b6 0a 88 08 c3 8b 0a 89 08 c3 90
+0x00007ffae0ad1410:   49 83 f8 20 77 17 f3 0f 6f 0a f3 42 0f 6f 54 02
+0x00007ffae0ad1420:   f0 f3 0f 7f 09 f3 42 0f 7f 54 01 f0 c3 48 3b d1
+0x00007ffae0ad1430:   73 0e 4e 8d 0c 02 49 3b c9 0f 82 41 04 00 00 90
+0x00007ffae0ad1440:   83 3d d1 4b 01 00 03 0f 82 e3 02 00 00 49 81 f8
+0x00007ffae0ad1450:   00 20 00 00 76 16 49 81 f8 00 00 18 00 77 0d f6
+0x00007ffae0ad1460:   05 56 4f 01 00 02 0f 85 64 fe ff ff c5 fe 6f 02
+0x00007ffae0ad1470:   c4 a1 7e 6f 6c 02 e0 49 81 f8 00 01 00 00 0f 86
+0x00007ffae0ad1480:   c4 00 00 00 4c 8b c9 49 83 e1 1f 49 83 e9 20 49
+0x00007ffae0ad1490:   2b c9 49 2b d1 4d 03 c1 49 81 f8 00 01 00 00 0f
+0x00007ffae0ad14a0:   86 a3 00 00 00 49 81 f8 00 00 18 00 0f 87 3e 01
+0x00007ffae0ad14b0:   00 00 66 66 66 66 66 66 0f 1f 84 00 00 00 00 00
+0x00007ffae0ad14c0:   c5 fe 6f 0a c5 fe 6f 52 20 c5 fe 6f 5a 40 c5 fe
+0x00007ffae0ad14d0:   6f 62 60 c5 fd 7f 09 c5 fd 7f 51 20 c5 fd 7f 59
+0x00007ffae0ad14e0:   40 c5 fd 7f 61 60 c5 fe 6f 8a 80 00 00 00 c5 fe
+0x00007ffae0ad14f0:   6f 92 a0 00 00 00 c5 fe 6f 9a c0 00 00 00 c5 fe
+0x00007ffae0ad1500:   6f a2 e0 00 00 00 c5 fd 7f 89 80 00 00 00 c5 fd
+0x00007ffae0ad1510:   7f 91 a0 00 00 00 c5 fd 7f 99 c0 00 00 00 c5 fd
+0x00007ffae0ad1520:   7f a1 e0 00 00 00 48 81 c1 00 01 00 00 48 81 c2
+0x00007ffae0ad1530:   00 01 00 00 49 81 e8 00 01 00 00 49 81 f8 00 01
+0x00007ffae0ad1540:   00 00 0f 83 78 ff ff ff 4d 8d 48 1f 49 83 e1 e0
+0x00007ffae0ad1550:   4d 8b d9 49 c1 eb 05 47 8b 9c 9a 40 80 01 00 4d
+0x00007ffae0ad1560:   03 da 41 ff e3 c4 a1 7e 6f 8c 0a 00 ff ff ff c4 
+
+
+Stack slot to memory mapping:
+stack at sp + 0 slots: 0x00007ffa884090fa jvm.dll
+stack at sp + 1 slots: 0x000001c6e0077800 is a thread
+stack at sp + 2 slots: 0x00007ffa88407339 jvm.dll
+stack at sp + 3 slots: 0x000001c6e0077800 is a thread
+stack at sp + 4 slots: 0x00000047cf3fb370 is pointing into the stack for thread: 0x000001c6e0077800
+stack at sp + 5 slots: 0x000001c6e0077800 is a thread
+stack at sp + 6 slots: 0x0 is NULL
+stack at sp + 7 slots: 0x000001c6e0077800 is a thread
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x000001c68114dd60, length=17, elements={
+0x000001c6e0077800, 0x000001c6fd5a8000, 0x000001c6e0004800, 0x000001c6fd5f3800,
+0x000001c6fd5f4800, 0x000001c6fd5f7800, 0x000001c6e0022800, 0x000001c6e0024000,
+0x000001c6e0028800, 0x000001c6dff0a800, 0x000001c6fd7ac800, 0x000001c6fd89e000,
+0x000001c6806c7000, 0x000001c6806ea800, 0x000001c680705800, 0x000001c680810800,
+0x000001c680653800
+}
+
+Java Threads: ( => current thread )
+=>0x000001c6e0077800 JavaThread "Test worker" [_thread_in_vm, id=20584, stack(0x00000047cf000000,0x00000047cf400000)]
+  0x000001c6fd5a8000 JavaThread "Reference Handler" daemon [_thread_blocked, id=21112, stack(0x00000047cf600000,0x00000047cfa00000)]
+  0x000001c6e0004800 JavaThread "Finalizer" daemon [_thread_blocked, id=29592, stack(0x00000047cfa00000,0x00000047cfe00000)]
+  0x000001c6fd5f3800 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=14468, stack(0x00000047cfe00000,0x00000047d0200000)]
+  0x000001c6fd5f4800 JavaThread "Attach Listener" daemon [_thread_blocked, id=29556, stack(0x00000047d0200000,0x00000047d0600000)]
+  0x000001c6fd5f7800 JavaThread "Service Thread" daemon [_thread_blocked, id=4616, stack(0x00000047d0600000,0x00000047d0a00000)]
+  0x000001c6e0022800 JavaThread "C2 CompilerThread0" daemon [_thread_blocked, id=19012, stack(0x00000047d0a00000,0x00000047d0b00000)]
+  0x000001c6e0024000 JavaThread "C1 CompilerThread0" daemon [_thread_blocked, id=24424, stack(0x00000047d0b00000,0x00000047d0c00000)]
+  0x000001c6e0028800 JavaThread "Sweeper thread" daemon [_thread_blocked, id=15940, stack(0x00000047d0c00000,0x00000047d1000000)]
+  0x000001c6dff0a800 JavaThread "C1 CompilerThread1" daemon [_thread_blocked, id=24416, stack(0x00000047d1000000,0x00000047d1100000)]
+  0x000001c6fd7ac800 JavaThread "Common-Cleaner" daemon [_thread_blocked, id=22324, stack(0x00000047d1200000,0x00000047d1600000)]
+  0x000001c6fd89e000 JavaThread "C2 CompilerThread1" daemon [_thread_blocked, id=19204, stack(0x00000047d1600000,0x00000047d1700000)]
+  0x000001c6806c7000 JavaThread "C1 CompilerThread2" daemon [_thread_blocked, id=4488, stack(0x00000047d1700000,0x00000047d1800000)]
+  0x000001c6806ea800 JavaThread "C1 CompilerThread3" daemon [_thread_blocked, id=28292, stack(0x00000047d1800000,0x00000047d1900000)]
+  0x000001c680705800 JavaThread "/127.0.0.1:62757 to /127.0.0.1:62756 workers" [_thread_blocked, id=16316, stack(0x00000047d1a00000,0x00000047d1e00000)]
+  0x000001c680810800 JavaThread "/127.0.0.1:62757 to /127.0.0.1:62756 workers Thread 2" [_thread_blocked, id=24020, stack(0x00000047d1e00000,0x00000047d2200000)]
+  0x000001c680653800 JavaThread "/127.0.0.1:62757 to /127.0.0.1:62756 workers Thread 3" [_thread_in_native, id=27292, stack(0x00000047d2200000,0x00000047d2600000)]
+
+Other Threads:
+  0x000001c6dff14000 VMThread "VM Thread" [stack: 0x00000047cf500000,0x00000047cf600000] [id=22936]
+  0x000001c6fd7a6000 WatcherThread [stack: 0x00000047d1100000,0x00000047d1200000] [id=22632]
+  0x000001c6e0092800 GCTaskThread "ParGC Thread#0" [stack: 0x00000047cf400000,0x00000047cf500000] [id=27476]
+  0x000001c6810f8800 GCTaskThread "ParGC Thread#1" [stack: 0x00000047d2700000,0x00000047d2800000] [id=22280]
+  0x000001c681064800 GCTaskThread "ParGC Thread#2" [stack: 0x00000047d2800000,0x00000047d2900000] [id=27688]
+  0x000001c68111b800 GCTaskThread "ParGC Thread#3" [stack: 0x00000047d2900000,0x00000047d2a00000] [id=26176]
+  0x000001c68109f800 GCTaskThread "ParGC Thread#4" [stack: 0x00000047d2a00000,0x00000047d2b00000] [id=28128]
+  0x000001c681067000 GCTaskThread "ParGC Thread#5" [stack: 0x00000047d2b00000,0x00000047d2c00000] [id=29644]
+  0x000001c680b58000 GCTaskThread "ParGC Thread#6" [stack: 0x00000047d2c00000,0x00000047d2d00000] [id=22204]
+  0x000001c680b59000 GCTaskThread "ParGC Thread#7" [stack: 0x00000047d2d00000,0x00000047d2e00000] [id=2036]
+
+Threads with active compile tasks:
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap address: 0x0000000080000000, size: 2048 MB, Compressed Oops mode: 32-bit
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 3
+Compressed class space size: 1073741824 Address: 0x0000000100000000
+
+Heap:
+ PSYoungGen      total 75776K, used 18586K [0x00000000d5580000, 0x00000000daa00000, 0x0000000100000000)
+  eden space 65024K, 28% used [0x00000000d5580000,0x00000000d67a6870,0x00000000d9500000)
+  from space 10752K, 0% used [0x00000000d9500000,0x00000000d9500000,0x00000000d9f80000)
+  to   space 10752K, 0% used [0x00000000d9f80000,0x00000000d9f80000,0x00000000daa00000)
+ ParOldGen       total 862208K, used 694718K [0x0000000080000000, 0x00000000b4a00000, 0x00000000d5580000)
+  object space 862208K, 80% used [0x0000000080000000,0x00000000aa66fbc0,0x00000000b4a00000)
+ Metaspace       used 25425K, capacity 26381K, committed 26624K, reserved 1073152K
+  class space    used 2725K, capacity 3068K, committed 3072K, reserved 1048576K
+
+Card table byte_map: [0x000001c6dfa20000,0x000001c6dfe30000] _byte_map_base: 0x000001c6df620000
+
+Marking Bits: (ParMarkBitMap*) 0x00007ffa88b274c0
+ Begin Bits: [0x000001c6f7ac0000, 0x000001c6f9ac0000)
+ End Bits:   [0x000001c6f9ac0000, 0x000001c6fbac0000)
+
+Polling page: 0x000001c6ddfd0000
+
+Metaspace:
+
+Usage:
+  Non-class:     22.77 MB capacity,    22.17 MB ( 97%) used,   517.09 KB (  2%) free+waste,    96.19 KB ( <1%) overhead. 
+      Class:      3.00 MB capacity,     2.66 MB ( 89%) used,   295.41 KB ( 10%) free+waste,    46.88 KB (  2%) overhead. 
+       Both:     25.76 MB capacity,    24.83 MB ( 96%) used,   812.49 KB (  3%) free+waste,   143.06 KB ( <1%) overhead. 
+
+Virtual space:
+  Non-class space:       24.00 MB reserved,      23.00 MB ( 96%) committed 
+      Class space:        1.00 GB reserved,       3.00 MB ( <1%) committed 
+             Both:        1.02 GB reserved,      26.00 MB (  2%) committed 
+
+Chunk freelists:
+   Non-Class:  47.00 KB
+       Class:  4.00 KB
+        Both:  51.00 KB
+
+MaxMetaspaceSize: 17179869184.00 GB
+CompressedClassSpaceSize: 1.00 GB
+Initial GC threshold: 20.80 MB
+Current GC threshold: 34.59 MB
+CDS: off
+
+CodeHeap 'non-profiled nmethods': size=119168Kb used=732Kb max_used=732Kb free=118435Kb
+ bounds [0x000001c6f03b0000, 0x000001c6f0620000, 0x000001c6f7810000]
+CodeHeap 'profiled nmethods': size=119168Kb used=4020Kb max_used=4020Kb free=115147Kb
+ bounds [0x000001c6e8f50000, 0x000001c6e9340000, 0x000001c6f03b0000]
+CodeHeap 'non-nmethods': size=7424Kb used=2870Kb max_used=2901Kb free=4553Kb
+ bounds [0x000001c6e8810000, 0x000001c6e8af0000, 0x000001c6e8f50000]
+ total_blobs=2438 nmethods=1992 adapters=357
+ compilation: enabled
+              stopped_count=0, restarted_count=0
+ full_count=0
+
+Compilation events (20 events):
+Event: 1.049 Thread 0x000001c6806c7000 nmethod 1984 0x000001c6e933b290 code [0x000001c6e933b440, 0x000001c6e933b5f8]
+Event: 1.049 Thread 0x000001c6e0024000 1985       1       org.apache.kafka.common.protocol.Errors::code (5 bytes)
+Event: 1.049 Thread 0x000001c6e0024000 nmethod 1985 0x000001c6f045f190 code [0x000001c6f045f340, 0x000001c6f045f3f8]
+Event: 1.055 Thread 0x000001c6806ea800 1986       3       org.apache.kafka.common.utils.ImplicitLinkedHashCollection$ImplicitLinkedHashCollectionIterator::hasNext (20 bytes)
+Event: 1.055 Thread 0x000001c6806ea800 nmethod 1986 0x000001c6e933b710 code [0x000001c6e933b8c0, 0x000001c6e933ba38]
+Event: 1.056 Thread 0x000001c6dff0a800 1987       3       org.apache.kafka.common.utils.ImplicitLinkedHashCollection::access$100 (7 bytes)
+Event: 1.056 Thread 0x000001c6e0022800 1988       4       java.util.ArrayList$Itr::hasNext (20 bytes)
+Event: 1.056 Thread 0x000001c6dff0a800 nmethod 1987 0x000001c6e933bb10 code [0x000001c6e933bcc0, 0x000001c6e933be58]
+Event: 1.057 Thread 0x000001c6e0022800 nmethod 1988 0x000001c6f045f490 code [0x000001c6f045f620, 0x000001c6f045f6b8]
+Event: 1.061 Thread 0x000001c6806c7000 1989       3       java.util.regex.Pattern::next (33 bytes)
+Event: 1.061 Thread 0x000001c6806c7000 nmethod 1989 0x000001c6e933bf90 code [0x000001c6e933c160, 0x000001c6e933c3c8]
+Event: 1.061 Thread 0x000001c6e0024000 1990       3       java.util.ArrayList::toArray (12 bytes)
+Event: 1.061 Thread 0x000001c6e0024000 nmethod 1990 0x000001c6e933c510 code [0x000001c6e933c6e0, 0x000001c6e933c8a8]
+Event: 1.067 Thread 0x000001c6e0022800 1991       4       java.lang.ref.Cleaner$1::apply (9 bytes)
+Event: 1.068 Thread 0x000001c6e0022800 nmethod 1991 0x000001c6f045f790 code [0x000001c6f045f920, 0x000001c6f045f9b8]
+Event: 1.089 Thread 0x000001c6fd89e000 nmethod 1975 0x000001c6f045fa90 code [0x000001c6f0460080, 0x000001c6f0464d20]
+Event: 1.091 Thread 0x000001c6806ea800 1992       3       org.apache.kafka.common.protocol.MessageSizeAccumulator::addBytes (11 bytes)
+Event: 1.091 Thread 0x000001c6dff0a800 1993       3       java.nio.HeapByteBuffer::ix (7 bytes)
+Event: 1.091 Thread 0x000001c6806ea800 nmethod 1992 0x000001c6e933c990 code [0x000001c6e933cb40, 0x000001c6e933cc38]
+Event: 1.091 Thread 0x000001c6dff0a800 nmethod 1993 0x000001c6e933cd10 code [0x000001c6e933cec0, 0x000001c6e933cfb8]
+
+GC Heap History (4 events):
+Event: 0.789 GC heap before
+{Heap before GC invocations=1 (full 0):
+ PSYoungGen      total 75776K, used 61932K [0x00000000d5580000, 0x00000000daa00000, 0x0000000100000000)
+  eden space 65024K, 95% used [0x00000000d5580000,0x00000000d91fb2b0,0x00000000d9500000)
+  from space 10752K, 0% used [0x00000000d9f80000,0x00000000d9f80000,0x00000000daa00000)
+  to   space 10752K, 0% used [0x00000000d9500000,0x00000000d9500000,0x00000000d9f80000)
+ ParOldGen       total 173568K, used 0K [0x0000000080000000, 0x000000008a980000, 0x00000000d5580000)
+  object space 173568K, 0% used [0x0000000080000000,0x0000000080000000,0x000000008a980000)
+ Metaspace       used 20397K, capacity 21148K, committed 21248K, reserved 1069056K
+  class space    used 2239K, capacity 2518K, committed 2560K, reserved 1048576K
+}
+Event: 0.794 GC heap after
+{Heap after GC invocations=1 (full 0):
+ PSYoungGen      total 75776K, used 6909K [0x00000000d5580000, 0x00000000daa00000, 0x0000000100000000)
+  eden space 65024K, 0% used [0x00000000d5580000,0x00000000d5580000,0x00000000d9500000)
+  from space 10752K, 64% used [0x00000000d9500000,0x00000000d9bbf4c8,0x00000000d9f80000)
+  to   space 10752K, 0% used [0x00000000d9f80000,0x00000000d9f80000,0x00000000daa00000)
+ ParOldGen       total 173568K, used 24K [0x0000000080000000, 0x000000008a980000, 0x00000000d5580000)
+  object space 173568K, 0% used [0x0000000080000000,0x0000000080006000,0x000000008a980000)
+ Metaspace       used 20397K, capacity 21148K, committed 21248K, reserved 1069056K
+  class space    used 2239K, capacity 2518K, committed 2560K, reserved 1048576K
+}
+Event: 0.794 GC heap before
+{Heap before GC invocations=2 (full 1):
+ PSYoungGen      total 75776K, used 6909K [0x00000000d5580000, 0x00000000daa00000, 0x0000000100000000)
+  eden space 65024K, 0% used [0x00000000d5580000,0x00000000d5580000,0x00000000d9500000)
+  from space 10752K, 64% used [0x00000000d9500000,0x00000000d9bbf4c8,0x00000000d9f80000)
+  to   space 10752K, 0% used [0x00000000d9f80000,0x00000000d9f80000,0x00000000daa00000)
+ ParOldGen       total 173568K, used 24K [0x0000000080000000, 0x000000008a980000, 0x00000000d5580000)
+  object space 173568K, 0% used [0x0000000080000000,0x0000000080006000,0x000000008a980000)
+ Metaspace       used 20397K, capacity 21148K, committed 21248K, reserved 1069056K
+  class space    used 2239K, capacity 2518K, committed 2560K, reserved 1048576K
+}
+Event: 0.812 GC heap after
+{Heap after GC invocations=2 (full 1):
+ PSYoungGen      total 75776K, used 0K [0x00000000d5580000, 0x00000000daa00000, 0x0000000100000000)
+  eden space 65024K, 0% used [0x00000000d5580000,0x00000000d5580000,0x00000000d9500000)
+  from space 10752K, 0% used [0x00000000d9500000,0x00000000d9500000,0x00000000d9f80000)
+  to   space 10752K, 0% used [0x00000000d9f80000,0x00000000d9f80000,0x00000000daa00000)
+ ParOldGen       total 173568K, used 6590K [0x0000000080000000, 0x000000008a980000, 0x00000000d5580000)
+  object space 173568K, 3% used [0x0000000080000000,0x000000008066fbb0,0x000000008a980000)
+ Metaspace       used 20397K, capacity 21148K, committed 21248K, reserved 1069056K
+  class space    used 2239K, capacity 2518K, committed 2560K, reserved 1048576K
+}
+
+Deoptimization events (20 events):
+Event: 0.657 Thread 0x000001c6e0077800 Uncommon trap: trap_request=0xffffff4d fr.pc=0x000001c6f03cee7c relative=0x000000000000015c
+Event: 0.657 Thread 0x000001c6e0077800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x000001c6f03cee7c method=java.lang.String.hashCode()I @ 22 c2
+Event: 0.657 Thread 0x000001c6e0077800 DEOPT PACKING pc=0x000001c6f03cee7c sp=0x00000047cf3fb020
+Event: 0.657 Thread 0x000001c6e0077800 DEOPT UNPACKING pc=0x000001c6e885a1af sp=0x00000047cf3fafa8 mode 2
+Event: 0.872 Thread 0x000001c6e0077800 Uncommon trap: trap_request=0xffffff4d fr.pc=0x000001c6f043d940 relative=0x0000000000000b40
+Event: 0.872 Thread 0x000001c6e0077800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x000001c6f043d940 method=java.util.concurrent.ConcurrentHashMap.transfer([Ljava/util/concurrent/ConcurrentHashMap$Node;[Ljava/util/concurrent/ConcurrentHashMap$Node;)V @ 26 c2
+Event: 0.872 Thread 0x000001c6e0077800 DEOPT PACKING pc=0x000001c6f043d940 sp=0x00000047cf3f73f0
+Event: 0.872 Thread 0x000001c6e0077800 DEOPT UNPACKING pc=0x000001c6e885a1af sp=0x00000047cf3f7370 mode 2
+Event: 0.987 Thread 0x000001c6e0077800 Uncommon trap: trap_request=0xffffff4d fr.pc=0x000001c6f03fc744 relative=0x0000000000000164
+Event: 0.987 Thread 0x000001c6e0077800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x000001c6f03fc744 method=java.util.concurrent.ConcurrentHashMap.addCount(JI)V @ 121 c2
+Event: 0.987 Thread 0x000001c6e0077800 DEOPT PACKING pc=0x000001c6f03fc744 sp=0x00000047cf3f9810
+Event: 0.987 Thread 0x000001c6e0077800 DEOPT UNPACKING pc=0x000001c6e885a1af sp=0x00000047cf3f9770 mode 2
+Event: 0.987 Thread 0x000001c6e0077800 Uncommon trap: trap_request=0xffffff4d fr.pc=0x000001c6f0438e3c relative=0x000000000000009c
+Event: 0.987 Thread 0x000001c6e0077800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x000001c6f0438e3c method=java.lang.ref.SoftReference.get()Ljava/lang/Object; @ 17 c2
+Event: 0.987 Thread 0x000001c6e0077800 DEOPT PACKING pc=0x000001c6f0438e3c sp=0x00000047cf3f9790
+Event: 0.987 Thread 0x000001c6e0077800 DEOPT UNPACKING pc=0x000001c6e885a1af sp=0x00000047cf3f9720 mode 2
+Event: 1.063 Thread 0x000001c6e0077800 Uncommon trap: trap_request=0xffffff4d fr.pc=0x000001c6f042aa58 relative=0x0000000000000038
+Event: 1.063 Thread 0x000001c6e0077800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x000001c6f042aa58 method=java.util.Objects.requireNonNull(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object; @ 1 c2
+Event: 1.063 Thread 0x000001c6e0077800 DEOPT PACKING pc=0x000001c6f042aa58 sp=0x00000047cf3fa250
+Event: 1.063 Thread 0x000001c6e0077800 DEOPT UNPACKING pc=0x000001c6e885a1af sp=0x00000047cf3fa1f0 mode 2
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (20 events):
+Event: 0.564 Thread 0x000001c6e0077800 Exception <a 'java/lang/NoSuchMethodError'{0x00000000d8318020}: 'void java.lang.invoke.DirectMethodHandle$Holder.invokeStaticInit(java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object)'> (0x00000000d8318020) thrown at [s\src\hotspot\share\interpreter\linkResolver.cpp, line 773]
+Event: 0.570 Thread 0x000001c6e0077800 Exception <a 'java/lang/NoSuchMethodError'{0x00000000d83a72e8}: 'int java.lang.invoke.DirectMethodHandle$Holder.invokeStaticInit(java.lang.Object, java.lang.Object)'> (0x00000000d83a72e8) thrown at [s\src\hotspot\share\interpreter\linkResolver.cpp, line 773]
+Event: 0.589 Thread 0x000001c6e0077800 Exception <a 'java/lang/NoSuchMethodError'{0x00000000d851e200}: 'java.lang.Object java.lang.invoke.Invokers$Holder.linkToTargetMethod(java.lang.Object, int, java.lang.Object)'> (0x00000000d851e200) thrown at [s\src\hotspot\share\interpreter\linkResolver.cpp, line 773]
+Event: 0.600 Thread 0x000001c6e0077800 Exception <a 'java/lang/NoSuchMethodError'{0x00000000d85d7d08}: 'java.lang.Object java.lang.invoke.Invokers$Holder.linkToTargetMethod(java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object)'> (0x00000000d85d7d08) thrown at [s\src\hotspot\share\interpreter\linkResolver.cpp, line 773]
+Event: 0.601 Thread 0x000001c6e0077800 Exception <a 'java/lang/NoSuchMethodError'{0x00000000d85f0910}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeInterface(java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object)'> (0x00000000d85f0910) thrown at [s\src\hotspot\share\interpreter\linkResolver.cpp, line 773]
+Event: 0.601 Thread 0x000001c6e0077800 Exception <a 'java/lang/IncompatibleClassChangeError'{0x00000000d85f4068}: Found class java.lang.Object, but interface was expected> (0x00000000d85f4068) thrown at [s\src\hotspot\share\interpreter\linkResolver.cpp, line 839]
+Event: 0.631 Thread 0x000001c6e0077800 Exception <a 'java/lang/NoSuchMethodError'{0x00000000d88a7de0}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeStatic(java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, int)'> (0x00000000d88a7de0) thrown at [s\src\hotspot\share\interpreter\linkResolver.cpp, line 773]
+Event: 0.631 Thread 0x000001c6e0077800 Exception <a 'java/lang/NoSuchMethodError'{0x00000000d88c6b10}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeStatic(java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, int, int)'> (0x00000000d88c6b10) thrown at [s\src\hotspot\share\interpreter\linkResolver.cpp, line 773]
+Event: 0.632 Thread 0x000001c6e0077800 Exception <a 'java/lang/NoSuchMethodError'{0x00000000d88e63c8}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeStatic(java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, int, int, java.lang.Object)'> (0x00000000d88e63c8) thrown at [s\src\hotspot\share\interpreter\linkResolver.cpp, line 773]
+Event: 0.633 Thread 0x000001c6e0077800 Exception <a 'java/lang/NoSuchMethodError'{0x00000000d89073b0}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeStatic(java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, int, int, java.lang.Object, java.lang.Object)'> (0x00000000d89073b0) thrown at [s\src\hotspot\share\interpreter\linkResolver.cpp, line 773]
+Event: 0.634 Thread 0x000001c6e0077800 Exception <a 'java/lang/ClassNotFoundException'{0x00000000d8920ab8}: org/apache/log4j/PatternLayoutBeanInfo> (0x00000000d8920ab8) thrown at [s\src\hotspot\share\classfile\systemDictionary.cpp, line 230]
+Event: 0.634 Thread 0x000001c6e0077800 Exception <a 'java/lang/ClassNotFoundException'{0x00000000d892dc00}: org/apache/log4j/LayoutBeanInfo> (0x00000000d892dc00) thrown at [s\src\hotspot\share\classfile\systemDictionary.cpp, line 230]
+Event: 0.634 Thread 0x000001c6e0077800 Exception <a 'java/lang/ClassNotFoundException'{0x00000000d892f3e0}: java/lang/ObjectBeanInfo> (0x00000000d892f3e0) thrown at [s\src\hotspot\share\classfile\systemDictionary.cpp, line 230]
+Event: 0.634 Thread 0x000001c6e0077800 Exception <a 'java/lang/ClassNotFoundException'{0x00000000d89321b0}: java/lang/ObjectCustomizer> (0x00000000d89321b0) thrown at [s\src\hotspot\share\classfile\systemDictionary.cpp, line 230]
+Event: 0.638 Thread 0x000001c6e0077800 Exception <a 'java/lang/ClassNotFoundException'{0x00000000d894f2b8}: org/apache/log4j/LayoutCustomizer> (0x00000000d894f2b8) thrown at [s\src\hotspot\share\classfile\systemDictionary.cpp, line 230]
+Event: 0.638 Thread 0x000001c6e0077800 Exception <a 'java/lang/ClassNotFoundException'{0x00000000d896e4b8}: org/apache/log4j/PatternLayoutCustomizer> (0x00000000d896e4b8) thrown at [s\src\hotspot\share\classfile\systemDictionary.cpp, line 230]
+Event: 0.641 Thread 0x000001c6e0077800 Implicit null exception at 0x000001c6f03deff2 to 0x000001c6f03df1d8
+Event: 0.641 Thread 0x000001c6e0077800 Implicit null exception at 0x000001c6f03de8f2 to 0x000001c6f03dead8
+Event: 0.653 Thread 0x000001c6e0077800 Exception <a 'java/lang/IncompatibleClassChangeError'{0x00000000d8a2fe08}: Found class java.lang.Object, but interface was expected> (0x00000000d8a2fe08) thrown at [s\src\hotspot\share\interpreter\linkResolver.cpp, line 839]
+Event: 0.987 Thread 0x000001c6e0077800 Exception <a 'java/lang/NoSuchMethodError'{0x00000000d5f98080}: 'int java.lang.invoke.DirectMethodHandle$Holder.invokeStaticInit(java.lang.Object, java.lang.Object, java.lang.Object)'> (0x00000000d5f98080) thrown at [s\src\hotspot\share\interpreter\linkResolver.cpp, line 773]
+
+Events (20 events):
+Event: 1.087 loading class org/apache/kafka/common/requests/UpdateRaftVoterRequest done
+Event: 1.088 loading class org/apache/kafka/common/requests/InitializeShareGroupStateRequest
+Event: 1.088 loading class org/apache/kafka/common/requests/InitializeShareGroupStateRequest done
+Event: 1.088 loading class org/apache/kafka/common/requests/ReadShareGroupStateRequest
+Event: 1.088 loading class org/apache/kafka/common/requests/ReadShareGroupStateRequest done
+Event: 1.089 loading class org/apache/kafka/common/requests/WriteShareGroupStateRequest
+Event: 1.089 loading class org/apache/kafka/common/requests/WriteShareGroupStateRequest done
+Event: 1.089 loading class org/apache/kafka/common/requests/DeleteShareGroupStateRequest
+Event: 1.089 loading class org/apache/kafka/common/requests/DeleteShareGroupStateRequest done
+Event: 1.089 loading class org/apache/kafka/common/requests/ReadShareGroupStateSummaryRequest
+Event: 1.089 loading class org/apache/kafka/common/requests/ReadShareGroupStateSummaryRequest done
+Event: 1.090 loading class org/apache/kafka/common/message/RequestHeaderData
+Event: 1.090 loading class org/apache/kafka/common/message/RequestHeaderData done
+Event: 1.091 loading class org/apache/kafka/common/protocol/SendBuilder
+Event: 1.091 loading class org/apache/kafka/common/protocol/SendBuilder done
+Event: 1.091 loading class org/apache/kafka/common/network/ByteBufferSend
+Event: 1.091 loading class org/apache/kafka/common/network/ByteBufferSend done
+Event: 1.091 loading class org/apache/kafka/clients/producer/SharedMemoryManager
+Event: 1.091 loading class org/apache/kafka/clients/producer/SharedMemoryManager done
+Event: 1.094 Loaded shared library C:\Users\guest1\Desktop\test\kafka\build\native\sharedmemory.dll
+
+
+Dynamic libraries:
+0x00007ff7b4020000 - 0x00007ff7b402e000 	C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\java.exe
+0x00007ffb11750000 - 0x00007ffb11967000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ffb10e20000 - 0x00007ffb10ee4000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007ffb0ec20000 - 0x00007ffb0efda000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007ffb0eb00000 - 0x00007ffb0ec11000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007ffae0ad0000 - 0x00007ffae0aeb000 	C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\VCRUNTIME140.dll
+0x00007ffadf070000 - 0x00007ffadf087000 	C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\jli.dll
+0x00007ffb114e0000 - 0x00007ffb1168e000 	C:\WINDOWS\System32\USER32.dll
+0x00007ffaff380000 - 0x00007ffaff612000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22621.4541_none_2710d1c57384c085\COMCTL32.dll
+0x00007ffb0ead0000 - 0x00007ffb0eaf6000 	C:\WINDOWS\System32\win32u.dll
+0x00007ffb10230000 - 0x00007ffb102d7000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007ffb10cd0000 - 0x00007ffb10cf9000 	C:\WINDOWS\System32\GDI32.dll
+0x00007ffb0f080000 - 0x00007ffb0f19b000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007ffb0efe0000 - 0x00007ffb0f07a000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007ffb103c0000 - 0x00007ffb103f1000 	C:\WINDOWS\System32\IMM32.DLL
+0x00007ffaed530000 - 0x00007ffaed53c000 	C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\vcruntime140_1.dll
+0x00007ffaca770000 - 0x00007ffaca7fd000 	C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\msvcp140.dll
+0x00007ffa88020000 - 0x00007ffa88be5000 	C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\server\jvm.dll
+0x00007ffb10d60000 - 0x00007ffb10e12000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007ffb0fa00000 - 0x00007ffb0faa7000 	C:\WINDOWS\System32\sechost.dll
+0x00007ffb0eaa0000 - 0x00007ffb0eac8000 	C:\WINDOWS\System32\bcrypt.dll
+0x00007ffb0ffa0000 - 0x00007ffb100b4000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007ffb10fa0000 - 0x00007ffb10fa8000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007ffb03190000 - 0x00007ffb03199000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ffb076b0000 - 0x00007ffb076ba000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ffb056d0000 - 0x00007ffb05704000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ffb11690000 - 0x00007ffb11701000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007ffb0d9c0000 - 0x00007ffb0d9d8000 	C:\WINDOWS\SYSTEM32\kernel.appcore.dll
+0x00007ffae8e20000 - 0x00007ffae8e30000 	C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\verify.dll
+0x00007ffb018c0000 - 0x00007ffb01af2000 	C:\WINDOWS\SYSTEM32\DBGHELP.DLL
+0x00007ffb0f550000 - 0x00007ffb0f8df000 	C:\WINDOWS\System32\combase.dll
+0x00007ffb102e0000 - 0x00007ffb103b7000 	C:\WINDOWS\System32\OLEAUT32.dll
+0x00007ffaf08c0000 - 0x00007ffaf08f2000 	C:\WINDOWS\SYSTEM32\dbgcore.DLL
+0x00007ffb0f310000 - 0x00007ffb0f38b000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007ffad87e0000 - 0x00007ffad8808000 	C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\java.dll
+0x00007ffae6e70000 - 0x00007ffae6e7a000 	C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\jimage.dll
+0x00007ffad7e80000 - 0x00007ffad7e98000 	C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\zip.dll
+0x00007ffb10450000 - 0x00007ffb10cc8000 	C:\WINDOWS\System32\SHELL32.dll
+0x00007ffb0c910000 - 0x00007ffb0d218000 	C:\WINDOWS\SYSTEM32\windows.storage.dll
+0x00007ffb0c7d0000 - 0x00007ffb0c90f000 	C:\WINDOWS\SYSTEM32\wintypes.dll
+0x00007ffb0f900000 - 0x00007ffb0f9fa000 	C:\WINDOWS\System32\SHCORE.dll
+0x00007ffb0ff40000 - 0x00007ffb0ff9e000 	C:\WINDOWS\System32\shlwapi.dll
+0x00007ffb0e950000 - 0x00007ffb0e97b000 	C:\WINDOWS\SYSTEM32\profapi.dll
+0x00007ffad56b0000 - 0x00007ffad56c9000 	C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\net.dll
+0x00007ffb09960000 - 0x00007ffb09a96000 	C:\WINDOWS\SYSTEM32\WINHTTP.dll
+0x00007ffb0de90000 - 0x00007ffb0def9000 	C:\WINDOWS\system32\mswsock.dll
+0x00007ffad5310000 - 0x00007ffad5322000 	C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\nio.dll
+0x00007ffb0e2d0000 - 0x00007ffb0e2eb000 	C:\WINDOWS\SYSTEM32\CRYPTSP.dll
+0x00007ffb0d980000 - 0x00007ffb0d9b5000 	C:\WINDOWS\system32\rsaenh.dll
+0x00007ffb0df30000 - 0x00007ffb0df58000 	C:\WINDOWS\SYSTEM32\USERENV.dll
+0x00007ffb0e2b0000 - 0x00007ffb0e2bc000 	C:\WINDOWS\SYSTEM32\CRYPTBASE.dll
+0x00007ffb0d480000 - 0x00007ffb0d4ad000 	C:\WINDOWS\SYSTEM32\IPHLPAPI.DLL
+0x00007ffb0fd70000 - 0x00007ffb0fd79000 	C:\WINDOWS\System32\NSI.dll
+0x00007ffb09740000 - 0x00007ffb09759000 	C:\WINDOWS\SYSTEM32\dhcpcsvc6.DLL
+0x00007ffb09720000 - 0x00007ffb0973f000 	C:\WINDOWS\SYSTEM32\dhcpcsvc.DLL
+0x00007ffb0d4b0000 - 0x00007ffb0d5b2000 	C:\WINDOWS\SYSTEM32\DNSAPI.dll
+0x00007ffb03170000 - 0x00007ffb0317a000 	C:\Windows\System32\rasadhlp.dll
+0x00007ffb090c0000 - 0x00007ffb09143000 	C:\WINDOWS\System32\fwpuclnt.dll
+0x00007ffae8b00000 - 0x00007ffae8b1d000 	C:\Users\guest1\Desktop\test\kafka\build\native\sharedmemory.dll
+
+dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
+symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin;C:\WINDOWS\SYSTEM32;C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22621.4541_none_2710d1c57384c085;C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin\server;C:\Users\guest1\Desktop\test\kafka\build\native
+
+VM Arguments:
+jvm_args: -Dkafka.cluster.test.repeat -Dorg.gradle.internal.worker.tmpdir=C:\Users\guest1\Desktop\test\kafka\clients\build\tmp\test\work -Xss4m -XX:+UseParallelGC -Xmx2g -Dfile.encoding=x-windows-949 -Duser.country=KR -Duser.language=ko -Duser.variant -ea 
+java_command: worker.org.gradle.process.internal.worker.GradleWorkerMain 'Gradle Test Executor 7'
+java_class_path (initial): C:\\Users\\guest1\\.gradle\\caches\\8.10\\workerMain\\gradle-worker.jar;C:\\Users\\guest1\\Desktop\\test\\kafka\\clients\\build\\classes\\java\\test;C:\\Users\\guest1\\Desktop\\test\\kafka\\clients\\build\\resources\\test;C:\\Users\\guest1\\Desktop\\test\\kafka\\clients\\build\\classes\\java\\main;C:\\Users\\guest1\\Desktop\\test\\kafka\\clients\\build\\resources\\main;C:\\Users\\guest1\\.gradle\\caches\\modules-2\\files-2.1\\com.github.luben\\zstd-jni\\1.5.6-6\\2fbdb6597ff51efa4a5bf12df18f27b5aa4f2625\\zstd-jni-1.5.6-6.jar;C:\\Users\\guest1\\.gradle\\caches\\modules-2\\files-2.1\\org.lz4\\lz4-java\\1.8.0\\4b986a99445e49ea5fbf5d149c4b63f6ed6c6780\\lz4-java-1.8.0.jar;C:\\Users\\guest1\\.gradle\\caches\\modules-2\\files-2.1\\org.xerial.snappy\\snappy-java\\1.1.10.5\\ac605269f3598506196e469f1fb0d7ed5c55059e\\snappy-java-1.1.10.5.jar;C:\\Users\\guest1\\.gradle\\caches\\modules-2\\files-2.1\\org.bitbucket.b_c\\jose4j\\0.9.4\\7efe6ccf593e52a2b77f98de52238f15b4a67188\\jose4j-0.9.4.jar;C:\\Users\\guest1\\.gradle\\caches\\modules-2\\files-2.1\\org.slf4j\\slf4j-reload4j\\1.7.36\\db708f7d959dee1857ac524636e85ecf2e1781c1\\slf4j-reload4j-1.7.36.jar;C:\\Users\\guest1\\.gradle\\caches\\modules-2\\files-2.1\\org.slf4j\\slf4j-api\\1.7.36\\6c62681a2f655b49963a5983b8b0950a6120ae14\\slf4j-api-1.7.36.jar;C:\\Users\\guest1\\.gradle\\caches\\modules-2\\files-2.1\\io.opentelemetry.proto\\opentelemetry-proto\\1.0.0-alpha\\aef3ea96207d6199d97f3cecd1674663894eade1\\opentelemetry-proto-1.0.0-alpha.jar;C:\\Users\\guest1\\.gradle\\caches\\modules-2\\files-2.1\\org.bouncycastle\\bcpkix-jdk18on\\1.75\\5adfef8a71a0933454739264b56283cc73dd2383\\bcpkix-jdk18on-1.75.jar;C:\\Users\\guest1\\.gradle\\caches\\modules-2\\files-2.1\\com.fasterxml.jackson.datatype\\jackson-datatype-jdk8\\2.16.2\\2c3593b299fcd1a6b8197876f95da82d7aa7340\\jackson-datatype-jdk8-2.16.2.jar;C:\\Users\\guest1\\.gradle\\caches\\modules-2\\files-2.1\\com.fasterxml.jackson.jaxrs\\jackson-jaxrs-base\\2.16.2
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+     intx CICompilerCount                          = 12                                        {product} {ergonomic}
+   size_t InitialHeapSize                          = 266338304                                 {product} {ergonomic}
+   size_t MaxHeapSize                              = 2147483648                                {product} {command line}
+   size_t MaxNewSize                               = 715653120                                 {product} {ergonomic}
+   size_t MinHeapDeltaBytes                        = 524288                                    {product} {ergonomic}
+   size_t NewSize                                  = 88604672                                  {product} {ergonomic}
+    uintx NonNMethodCodeHeapSize                   = 7594288                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122031976                              {pd product} {ergonomic}
+   size_t OldSize                                  = 177733632                                 {product} {ergonomic}
+    uintx ProfiledCodeHeapSize                     = 122031976                              {pd product} {ergonomic}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+     intx ThreadStackSize                          = 4096                                   {pd product} {command line}
+     bool UseCompressedClassPointers               = true                                 {lp64_product} {ergonomic}
+     bool UseCompressedOops                        = true                                 {lp64_product} {ergonomic}
+     bool UseLargePagesIndividualAllocation        = false                                  {pd product} {ergonomic}
+     bool UseParallelGC                            = true                                      {product} {command line}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags
+ #1: stderr all=off uptime,level,tags
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Amazon Corretto\jdk11.0.24_8
+PATH=C:\Program Files\Amazon Corretto\jdk11.0.24_8\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\dotnet\;C:\Program Files\openssl-0.9.8k_X64\bin;C:\Program Files\Java\jdk-1.8\bin;C:\Program Files\MySQL\MySQL Server 8.0\bin;C:\Program Files\Docker\Docker\resources\bin;C:\Users\guest1\AppData\Local\Programs\Git\cmd;C:\Program Files\Git\cmd;C:\Program Files\PuTTY\;C:\Apache24\bin;C:\src\flutter\bin;C:\Program Files\OpenSSL-Win64\bin;C:\Users\guest1\AppData\Local\Programs\Python\Python312\Scripts;C:\Users\guest1\AppData\Local\Programs\Python\Python312;C:\Program Files\dotnet\;C:\Program Files\Amazon\AWSCLIV2\;C:\mingw64\bin;C:\Users\guest1\Desktop\test\kafka\build\native;C:\Users\guest1\AppData\Local\Programs\Python\Python312\Scripts\;C:\Users\guest1\AppData\Local\Programs\Python\Python312\;C:\Users\guest1\AppData\Local\Microsoft\WindowsApps;C:\Users\guest1\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\guest1\AppData\Local\Programs\Git\cmd;C:\Users\guest1\src\flutter\flutter\bin;C:\Users\guest1\.dotnet\tools;C:\Users\guest1\AppData\Local\Coursier\data\bin
+USERNAME=guest1
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 151 Stepping 2, GenuineIntel
+TMP=C:\Users\guest1\AppData\Local\Temp
+TEMP=C:\Users\guest1\AppData\Local\Temp
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 11 , 64 bit Build 22621 (10.0.22621.4391)
+OS uptime: 0 days 14:08 hours
+Hyper-V role detected
+
+CPU:total 16 (initial active 16) (8 cores per cpu, 2 threads per core) family 6 model 151 stepping 2 microcode 0x13, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, 3dnowpref, lzcnt, ht, tsc, tscinvbit, bmi1, bmi2, adx, sha, fma
+
+Memory: 4k page, system-wide physical 16222M (2085M free)
+TotalPageFile size 31582M (AvailPageFile size 7488M)
+current process WorkingSet (physical memory assigned to process): 818M, peak: 818M
+current process commit charge ("private bytes"): 1111M, peak: 1111M
+
+vm_info: OpenJDK 64-Bit Server VM (11.0.24+8-LTS) for windows-amd64 JRE (11.0.24+8-LTS), built on Jul  9 2024 22:03:43 by "Administrator" with MS VC++ 16.10 / 16.11 (VS2019)
+
+END.
